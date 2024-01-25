@@ -11,6 +11,8 @@
 
 > [!IMPORTANT]
 > The application is licensed by [Apache 2.0 License](./LICENSE).
+>
+> The icons and banners of application is licensed by [Attribution-NonCommercial-NoDerivatives 4.0 International License](./LICENSE_CC_BY_NC_ND_4.0). So `./assets/banner.png`, `./assets/newflow.png` and `./assets/newflow.svg` is licensed by [Attribution-NonCommercial-NoDerivatives 4.0 International License](./LICENSE_CC_BY_NC_ND_4.0)
 
 - [Electron.JS](https://github.com/electron/electron) is licensed by [MIT License](https://github.com/electron/electron/blob/main/LICENSE).
 - [electron/remote](https://github.com/electron/remote) is licensed by [MIT License](https://github.com/electron/remote/blob/main/LICENSE).
