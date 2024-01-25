@@ -1,0 +1,183 @@
+@import url(./background-material.css);
+
+body {
+    background: #000000;
+}
+
+* {
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    user-select: none;
+}
+
+.control {
+    -webkit-app-region: none;
+    opacity: 0.05;
+    color: #222222;
+    background: #DDDDDD;
+    z-index: 1;
+    --size: 24px;
+    padding: 4px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    transition-duration: 200ms;
+
+    &:hover {
+        opacity: 1;
+    }
+
+    &.close {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+    }
+
+    &.sound {
+        position: fixed;
+        bottom: 20px;
+        left: 20px;
+    }
+
+    &.fullscreen {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+
+        @media (max-width: 110px) {
+            display: none;
+        }
+    }
+
+    @media (max-width: 350px) {
+        &.backward {
+            display: none;
+        }
+
+        &.forward {
+            display: none;
+        }
+    }
+
+    @media (max-width: 250px) {
+        &.previous {
+            display: none;
+        }
+
+        &.next {
+            display: none;
+        }
+    }
+
+    @media (max-width: 150px) {
+        &.sound {
+            display: none;
+        }
+        &.fullscreen {
+            position: unset;
+        }
+    }
+}
+
+.main-controls {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    right: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+
+    &:hover .control:not(:hover) {
+        opacity: 0.2;
+        transition-duration: 50ms;
+    }
+
+    @media (max-height: 110px) {
+        display: none;
+    }
+}
+
+.time-slider {
+    -webkit-app-region: none;
+    box-sizing: border-box;
+    accent-color: white;
+    opacity: 0.05;
+    position: fixed;
+    bottom: 60px;
+    right: 20px;
+    left: 20px;
+    transition-duration: 200ms;
+
+    &:hover {
+        opacity: 1;
+    }
+
+    @media (max-height: 170px) {
+        display: none;
+    }
+}
+
+.time-info {
+    position: fixed;
+    color: #ffffff;
+    bottom: 90px;
+    left: 40px;
+    opacity: 0;
+    -webkit-app-region: drag;
+    transition-duration: 200ms;
+
+    :is(body):has(.time-slider:hover) & {
+        opacity: 1;
+    }
+
+    @media (max-height: 200px) {
+        display: none;
+    }
+
+    @media (max-width: 300px) {
+        display: none;
+    }
+
+}
+
+.video-container {
+    z-index: -1;
+
+    & video {
+        -webkit-app-region: drag;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+
+        &::cue {
+            background: color-mix(in srgb, #222222 75%, transparent);
+            color: #DDDDDD;
+        }
+    }
+}
+
+input[type="range"] {
+    height: 12px;
+    appearance: none;
+    background: transparent;
+    border-radius: 5px;
+    clip-path: inset(0 round 10px);
+}
+  
+input[type="range"]::-webkit-slider-runnable-track {
+    width: 100%;
+    background: #222222;
+    height: 12px;
+    border-radius: 5px;
+}
+  
+input[type="range"]::-webkit-slider-thumb {
+    appearance: none;
+    height: 12px;
+    width: 12px;
+    background: #cccccc;
+    box-shadow: -100vw 0 0 calc(100vw - 8px) #888888;
+}

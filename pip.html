@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Picture-in-Picture</title>
+        <link rel="stylesheet" href="./css/material-symbols.css">
+        <link rel="stylesheet" href="./css/pip.css">
+        <script src="./js/pip.js" defer></script>
+    </head>
+    <body>
+        <div class="video-container"></div>
+        <material-symbol class="control close">close</material-symbol>
+        <div class="time-info"><span class="current-time">0:00</span>/<span class="duration">0:00</span></div>
+        <input type="range" class="time-slider" min="0" step="1" max="1" value="0"/>
+        <div class="main-controls">
+            <material-symbol class="control sound">volume_up</material-symbol>
+            <material-symbol class="control previous">skip_previous</material-symbol>
+            <material-symbol class="control backward">fast_rewind</material-symbol>
+            <material-symbol class="control play-pause">play_arrow</material-symbol>
+            <material-symbol class="control forward">fast_forward</material-symbol>
+            <material-symbol class="control next">skip_next</material-symbol>
+            <material-symbol class="control fullscreen">fullscreen</material-symbol>
+        </div>
+    </body>
+</html>

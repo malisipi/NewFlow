@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NewFlow</title>
+    <link rel="stylesheet" href="./css/material-symbols.css">
+    <link rel="stylesheet" href="./css/layout.css">
+    <link rel="stylesheet" href="./css/styles.css">
+    <script src="./js/imports.js"></script>
+    <script src="./js/backtrace.js"></script>
+    <script src="./js/components.js" defer></script>
+    <script src="./js/render.js"></script>
+    <script src="./js/image_helper.js"></script>
+    <script src="./js/context_menu.js"></script>
+    <script src="./js/json_database.js"></script>
+    <script src="./js/language_pack.js"></script>
+    <script @src="./js/database.js" full-defer></script>
+    <script @src="./js/downloader.js" full-defer></script>
+    <script @src="./js/phantom.js" full-defer></script>
+    <script @src="./js/thirdparty/vibrant.js" full-defer></script>
+    <script @src="./js/thirdparty/hls.light.min.js" full-defer></script>
+    <script @src="./js/plugins.js" full-defer></script>
+    <script>
+      document.addEventListener('readystatechange', event => { 
+          if (event.target.readyState === "complete") {
+            window.dispatchEvent(new CustomEvent("DocumentReady"));
+            document.querySelectorAll("script[full-defer]").forEach(tag => {
+              tag.setAttribute("src", tag.getAttribute("@src"));
+            });              
+          };
+      });
+    </script>
+</head>
+<body theme="light" os="other">
+  <datalist class="search" id="suggestions"></datalist>
+  <div class="titlebar">
+    <button class="material-symbol menu">menu</button>
+    <div class="title">NewFlow</div>
+    <input class="search" list="suggestions"/>
+    <div class="button-layout">
+      <button class="minimize">
+        <img class="other" draggable="false" src="./assets/fluent-icons/line_horizontal_1_16_regular.svg"/>
+        <img class="linux" draggable="false" src="./assets/yaru-icons/window-minimize-symbolic.svg"/>
+        <img class="linux kde" draggable="false" src="./assets/breeze-icons/go-down.svg"/>
+      </button>
+      <button class="maximize" state="maximize">
+        <img class="other maximize" draggable="false" src="./assets/fluent-icons/maximize_16_regular.svg"/>
+        <img class="linux maximize" draggable="false" src="./assets/yaru-icons/window-maximize-symbolic.svg"/>
+        <img class="linux maximize kde" draggable="false" src="./assets/breeze-icons/go-up.svg" />
+        <img class="other restore" draggable="false" src="./assets/fluent-icons/square_multiple_16_regular.svg"/>
+        <img class="linux restore" draggable="false" src="./assets/yaru-icons/window-restore-symbolic.svg"/>
+        <img class="linux restore kde" draggable="false" src="./assets/breeze-icons/window-restore.svg" />
+      </button>
+      <button class="close">
+        <img class="other" draggable="false" src="./assets/fluent-icons/dismiss_16_regular.svg"/>
+        <img class="linux" draggable="false" src="./assets/yaru-icons/window-close-symbolic.svg"/>
+        <img class="linux kde" draggable="false" src="./assets/breeze-icons/window-close.svg" />
+      </button>
+    </div>
+  </div>
+  <div class="sidenav">
+    <img draggable="false" src="./assets/banner.png" class="open-only bottom-border" />
+    <div tab="trends" tabindex="0">
+      <material-symbol>local_fire_department</material-symbol>
+      <div class="description"><language-pack key="trends"></language-pack></div>
+    </div>
+    <div tab="feed" tabindex="0">
+      <material-symbol>rss_feed</material-symbol>
+      <div class="description"><language-pack key="feed"></language-pack></div>
+    </div>
+    <div tab="following" tabindex="0">
+      <material-symbol>tv</material-symbol>
+      <div class="description"><language-pack key="following"></language-pack></div>
+    </div>
+    <div class="bottom-border" tab="bookmarks" tabindex="0">
+      <material-symbol>bookmarks</material-symbol>
+      <div class="description"><language-pack key="bookmarks"></language-pack></div>
+    </div>
+    <div class="open-only" tab="history" tabindex="0">
+      <material-symbol>history</material-symbol>
+      <div class="description"><language-pack key="history"></language-pack></div>
+    </div>
+    <div class="open-only bottom-border" tab="downloads" tabindex="0">
+      <material-symbol>download</material-symbol>
+      <div class="description"><language-pack key="downloads"></language-pack></div>
+    </div>
+    <div class="open-only" tab="settings" tabindex="0">
+      <material-symbol>settings</material-symbol>
+      <div class="description"><language-pack key="settings"></language-pack></div>
+    </div>
+    <div class="open-only" tab="about" tabindex="0">
+      <material-symbol>info</material-symbol>
+      <div class="description"><language-pack key="about_n_faq"></language-pack></div>
+    </div>
+    <div class="devtools" style="display: none;" tabindex="0">
+      <material-symbol>browse_activity</material-symbol>
+      <div class="description"><language-pack key="devtools"></language-pack></div>
+    </div>
+  </div>
+  <button class="material-symbol global-action search">search</button>
+  <div class="tabs" active="trends">
+    <div id="trends" class="view"><language-pack key="disabled_while_debug_mode"></language-pack></div>
+    <div id="search" class="view"></div>
+    <div id="watch" class="view">
+      <div class="primary-flow">
+        <div class="video-player">
+          <img class="thumbnail" />
+          <video preload="auto"></video>
+          <audio preload="auto"></audio>
+          <div class="details list speed" hidden>
+            <div class="title"><language-pack key="playback_speed"></language-pack></div>
+            <div class="list-item" value="0.25">0.25</div>
+            <div class="list-item" value="0.50">0.50</div>
+            <div class="list-item" value="0.75">0.75</div>
+            <div class="list-item" value="1.00"><language-pack key="normal"></language-pack></div>
+            <div class="list-item" value="1.25">1.25</div>
+            <div class="list-item" value="1.50">1.50</div>
+            <div class="list-item" value="1.75">1.75</div>
+            <div class="list-item" value="2.00">2</div>
+            <div class="list-item" value="2.50">2.50</div>
+            <div class="list-item" value="3.00">3</div>
+            <div class="list-item" value="3.50">3.50</div>
+            <div class="list-item" value="4.00">4</div>
+          </div>
+          <div class="details list captions" hidden></div>
+          <div class="details list more" hidden>
+            <div class="list-item filter" value="filter"><material-symbol>filter_retrolux</material-symbol> <language-pack key="filters"></language-pack></div>
+            <div class="list-item video-quality" value="video_quality"><material-symbol>video_settings</material-symbol> <language-pack key="video_quality"></language-pack></div>
+            <div class="list-item audio-quality" value="audio_quality"><material-symbol>tune</material-symbol> <language-pack key="audio_quality"></language-pack></div>
+          </div>
+          <div class="details filter" hidden></div>
+          <div class="details list timelines" hidden></div>
+          <div class="details list video-quality" hidden></div>
+          <div class="details list audio-quality" hidden></div>
+          <div class="time">
+            <input type="range" class="time-slider" min="0" max="1" step="1"/>
+          </div>
+          <div class="controls">
+            <div>
+              <material-symbol class="previous">skip_previous</material-symbol>
+              <material-symbol class="backward">fast_rewind</material-symbol>
+              <material-symbol class="play-pause">play_arrow</material-symbol>
+              <material-symbol class="forward">fast_forward</material-symbol>
+              <material-symbol class="next">skip_next</material-symbol>
+              <div class="hide-range">
+                <material-symbol class="sound">volume_up</material-symbol>
+                <input type="range"/>
+              </div>
+              <div class="time-info"><span class="current-time">0:00</span>/<span class="duration">0:00</span></div>
+            </div>
+            <div>
+              <material-symbol class="theatre">movie</material-symbol>
+              <material-symbol class="timelines">menu_book</material-symbol>
+              <material-symbol class="speed">slow_motion_video</material-symbol>
+              <material-symbol class="captions">closed_caption</material-symbol>
+              <material-symbol class="more">settings</material-symbol>
+              <material-symbol class="fullscreen">fullscreen</material-symbol>
+            </div>
+          </div>
+          <div class="loading-circle"></div>
+          <img class="channel-symbol"/>
+        </div>
+        <div class="info">
+          <div class="title"></div>
+          <div class="owner compact -owner-preview">
+            <img draggable="false" class="thumbnail"/>
+            <div class="name"></div>
+            <div class="followers"></div>
+            <material-symbol class="follow">notifications</material-symbol>
+          </div>
+          <div class="description"></div>
+          <div class="controls">
+            <button class="material-symbol like">favorite</button>
+            <button class="material-symbol playlist-add">playlist_add</button>
+            <button class="material-symbol listen">headphones</button>
+            <button class="material-symbol pip">picture_in_picture</button>
+            <button class="material-symbol download">download</button>
+            <button class="material-symbol share">share</button>
+          </div>
+          <div class="keywords"></div>
+        </div>
+        <div class="comments">Comments is not implemented</div>
+      </div>
+      <div class="seconder-flow">
+        <div class="panels">
+          <div class="autoplay">
+            <input checked type="checkbox" class="autoplay switch icons" on_icon="play_arrow" off_icon="pause">
+            <language-pack key="auto_add_to_queue"></language-pack>
+          </div>
+          <div class="playing-queue"></div>
+        </div>
+        <div class="next-videos"></div>
+      </div>
+    </div>
+    <div id="feed" class="view"></div>
+    <div id="following" class="view"></div>
+    <div id="bookmarks" class="view">Bookmarks is not implemented</div>
+    <div id="history" class="view"></div>
+    <div id="queue" class="view"></div>
+    <div id="downloads" class="view"></div>
+    <div id="settings" class="view">
+      <details>
+        <summary><language-pack key="appearance"></language-pack></summary>
+        <ul>
+          <li>
+            <span>Active Theme</span>
+            <input />
+          </li>
+          <li>
+            <span>Background Material</span>
+            <input />
+          </li>
+        </ul>
+      </details>
+      <details>
+        <summary><language-pack key="media_playing"></language-pack></summary>
+        Settings about media
+      </details>
+      <details>
+        <summary><language-pack key="plugins"></language-pack></summary>
+        Settings about plugins
+      </details>
+    </div>
+    <div id="about" class="view">
+      NewFlow<br>
+      Developed by malisipi
+    </div>
+    <div id="offline" class="view">
+      <div class="info_with_kaomoji">
+        <span class="kaomoji"><language-pack key="kaomoji_bird"></language-pack></span><br>
+        <language-pack key="no_network_bird"></language-pack>
+      </div>
+    </div>
+  </div>
+  <div class="playbar">
+    <img class="thumbnail" draggable="false" />
+    <div class="title"></div>
+    <div class="owner"></div>
+    <div class="controls">
+      <button class="material-symbol queue">list</button>
+      <button class="material-symbol play-pause">pause</button>
+      <button class="material-symbol close">close</button>
+    </div>
+  </div>
+  <dialog id="share" share_url="about:blank">
+    <material-symbol class="close">close</material-symbol>
+    <div class="title"><language-pack key="share"></language-pack></div>
+    <div class="actions">
+      <div><img class="twitter-x" draggable="false" src="./assets/bootstrap-icons/twitter-x.svg"></div>
+      <div><img class="whatsapp" draggable="false" src="./assets/bootstrap-icons/whatsapp.svg"></div>
+      <div><img class="telegram" draggable="false" src="./assets/bootstrap-icons/telegram.svg"></div>
+      <div><material-symbol class="copy-link">link</material-symbol></div>
+      <div><material-symbol class="open-in-browser">globe</material-symbol></div>
+    </div>
+  </dialog>
+</body>
+</html>

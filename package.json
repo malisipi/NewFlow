@@ -1,0 +1,11 @@
+{
+  "name": "NewFlow",
+  "version": "0.0.1",
+  "description": "A YouTube desktop client",
+  "main": "index.js",
+  "scripts": {
+    "test": "NEWFLOW_DEBUG=1 electron . --user-data-dir=./electron-data --enable-features=UseOzonePlatform --ozone-platform=wayland"
+  },
+  "author": "malisipi",
+  "license": "Apache-2.0"
+}

@@ -1,0 +1,112 @@
+{
+    "trends": {
+        "en": "Trends",
+        "tr": "Popüler"
+    },
+    "feed": {
+        "en": "Feed",
+        "tr": "Akış"
+    },
+    "following": {
+        "en": "Following",
+        "tr": "Takip Edilenler"
+    },
+    "bookmarks": {
+        "en": "Bookmarks",
+        "tr": "Yer İşaretleri"
+    },
+    "history": {
+        "en": "History",
+        "tr": "Geçmiş"
+    },
+    "downloads": {
+        "en": "Downloads",
+        "tr": "İndirilenler"
+    },
+    "settings": {
+        "en": "Settings",
+        "tr": "Ayarlar"
+    },
+    "about_n_faq": {
+        "en": "About & FAQ",
+        "tr": "Hakkında & SSS"
+    },
+    "devtools": {
+        "en": "Devtools",
+        "tr": "Geliştirici Araçları"
+    },
+    "playback_speed": {
+        "en": "Playback Speed",
+        "tr": "Oynatma Hızı"
+    },
+    "normal": {
+        "en": "Normal",
+        "tr": "Normal"
+    },
+    "loading": {
+        "en": "Loading..",
+        "tr": "Hazırlanıyor.."
+    },
+    "warning_not_family_safe_video": {
+        "en": "It is not a family safe video. Do you want to watch it?",
+        "tr": "Bu video aile ortamına uygun değil. İzlemek istediğinize emin misin?"
+    },
+    "followers": {
+        "en": "Followers",
+        "tr": "Takipçi"
+    },
+    "auto_add_to_queue": {
+        "en": "Automatically add to queue",
+        "tr": "Kendiliğinden sıraya ekle"
+    },
+    "video_quality": {
+        "en": "Video Quality",
+        "tr": "Video Kalitesi"
+    },
+    "audio_quality": {
+        "en": "Audio Quality",
+        "tr": "Ses Kalitesi"
+    },
+    "captions": {
+        "en": "Captions",
+        "tr": "Alt Yazılar"
+    },
+    "filters": {
+        "en": "Filters",
+        "tr": "Filtreler"
+    },
+    "phantom_captions": {
+        "en": "Phantom Captions",
+        "tr": "Fantom Alt Yazıları"
+    },
+    "disable": {
+        "en": "Disable",
+        "tr": "Devre Dışı"
+    },
+    "disabled_while_debug_mode": {
+        "en": "Disabled while debug mode",
+        "tr": "Hata ayıklama modunda devre dışı bırakıldı"
+    },
+    "share": {
+        "en": "Share",
+        "tr": "Paylaş"
+    },
+    "timelines": {
+        "en": "Timelines",
+        "tr": "Zaman Damgaları"
+    },
+    "kaomoji_dog": {
+        "en": "∪･ｪ･∪"
+    },
+    "kaomoji_bird": {
+        "en": "(｡･ө･｡)"
+    },
+    "there_are_nothing_more_dog": {
+        "en": "There're nothing more than a dog that wants play with you",
+        "tr": "Seninle oyun oynamak isteyen bir köpek dışında bir şey yok"
+    },
+    "no_network_bird": {
+        "en": "There're a bird who waits network to fly",
+        "tr": "Burada uçabilmek için interneti bekleyen bir kuş var"
+    }
+}

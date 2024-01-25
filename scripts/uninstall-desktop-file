@@ -1,0 +1,3 @@
+#!/bin/bash
+rm ~/.local/share/icons/hicolor/scalable/apps/newflow.svg
+rm ~/.local/share/applications/NewFlow.desktop

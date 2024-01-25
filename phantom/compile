@@ -1,0 +1,10 @@
+#!/bin/bash
+git clone https://github.com/ggerganov/whisper.cpp
+cd whisper.cpp
+make whisper.o
+make ggml.o
+make ggml-alloc.o
+make ggml-backend.o
+make ggml-quants.o
+cd ..
+g++ phantom.cpp -O3 -std=c++11 -pthread -I./whisper.cpp -I./whisper.cpp/examples -o phantom ./whisper.cpp/whisper.o ./whisper.cpp/ggml.o ./whisper.cpp/ggml-alloc.o ./whisper.cpp/ggml-backend.o ./whisper.cpp/ggml-quants.o ./whisper.cpp/examples/common.cpp

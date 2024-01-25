@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   version="1.1"
+   id="svg2"
+   width="1365.3333"
+   height="1365.3333"
+   viewBox="0 0 1365.3333 1365.3333"
+   sodipodi:docname="newflow_app.ai"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs6">
+    <clipPath
+       clipPathUnits="userSpaceOnUse"
+       id="clipPath16">
+      <path
+         d="M 0,1024 H 1024 V 0 H 0 Z"
+         id="path14" />
+    </clipPath>
+  </defs>
+  <sodipodi:namedview
+     id="namedview4"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1" />
+  <g
+     id="g8"
+     inkscape:groupmode="layer"
+     inkscape:label="newflow_app"
+     transform="matrix(1.3333333,0,0,-1.3333333,0,1365.3333)">
+    <g
+       id="g10">
+      <g
+         id="g12"
+         clip-path="url(#clipPath16)">
+        <g
+           id="g18"
+           transform="translate(1012,140)">
+          <path
+             d="m 0,0 c 0,-70.692 -57.308,-128 -128,-128 h -744 c -70.692,0 -128,57.308 -128,128 v 744 c 0,70.692 57.308,128 128,128 h 744 C -57.308,872 0,814.692 0,744 Z"
+             style="fill:#700000;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="path20" />
+        </g>
+        <g
+           id="g22"
+           transform="translate(219.4136,747.9746)">
+          <path
+             d="m 0,0 c 16.755,4.201 60.721,13.892 109.662,13.892 69.325,0 120.483,-18.567 152.049,-55.184 20.522,-23.804 34.507,-45.86 46.846,-65.32 39.509,-62.309 65.61,-103.472 235.103,-107.36 13.281,-0.305 24.527,-0.459 33.425,-0.459 2.381,0 4.597,0.012 6.625,0.034 -2.419,-14.662 -8.44,-41.807 -22.546,-69.583 -27.253,-53.665 -70.556,-84.442 -128.707,-91.475 -54.404,-6.581 -106.966,-8.995 -153.341,-11.125 -83.769,-3.849 -149.935,-6.888 -190.334,-31.019 -57.156,-34.138 -105.657,-75.922 -73.64,-207.598 L 0,-625.662 Z"
+             style="fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="path24" />
+        </g>
+        <g
+           id="g26"
+           transform="translate(814.5859,544)">
+          <path
+             d="m 0,0 h 0.005 z m -485.511,227.866 c -64.469,-0.002 -119.661,-16.199 -119.661,-16.199 V -432 l 37.93,1.166 c -35.409,131.428 5.569,172.542 65.98,208.625 60.411,36.085 190.5,22.748 339.747,40.801 C -12.266,-163.355 0,0 0,0 c 0,0 -2.891,-0.457 -18.087,-0.457 -7.597,0 -18.271,0.115 -33.196,0.457 -217.493,4.988 -188.992,69.904 -274.604,169.212 -39.916,46.302 -103.308,58.657 -159.624,58.654 m 0.016,-20 c 30.039,0 56.916,-3.708 79.885,-11.023 26.979,-8.591 48.706,-22.281 64.575,-40.69 20.043,-23.249 33.82,-44.976 45.974,-64.146 43.733,-68.97 76.596,-108.178 243.319,-112.002 10.787,-0.247 20.247,-0.396 28.216,-0.444 -3.132,-14.337 -8.856,-34.125 -19.122,-54.493 -25.628,-50.844 -66.429,-79.988 -121.268,-86.621 -54.034,-6.536 -106.399,-8.941 -152.6,-11.063 -85.171,-3.912 -152.445,-7.003 -195.002,-32.423 -32.788,-19.584 -58.517,-41.231 -73.654,-71.243 v 472.37 c 19.844,4.551 57.93,11.777 99.671,11.778 h 0.006"
+             style="fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="path28" />
+        </g>
+        <g
+           id="g30"
+           transform="translate(219.4136,900.0205)">
+          <path
+             d="M 0,0 C 7.424,-1.986 18.009,-5.904 29.181,-13.569 54.81,-31.155 72.401,-59.894 81.563,-99.101 46.082,-101.442 16.155,-107.562 0,-111.425 Z"
+             style="fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="path32" />
+        </g>
+        <g
+           id="g34"
+           transform="translate(209.4136,912)">
+          <path
+             d="m 0,0 v -136.33 c 0,0 46.35,13.61 103.73,15.88 C 82.259,-4.14 0,0 0,0 m 20,-26.165 c 4.487,-2.031 9.398,-4.717 14.435,-8.264 10.857,-7.644 20.288,-17.824 28.032,-30.255 6.709,-10.771 12.182,-23.283 16.359,-37.372 -23.437,-2.147 -43.904,-5.729 -58.826,-8.866 v 84.757"
+             style="fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="path36" />
+        </g>
+      </g>
+    </g>
+  </g>
+</svg>
