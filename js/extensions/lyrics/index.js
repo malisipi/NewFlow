@@ -36,6 +36,7 @@ var lyrics = {
         lyrics.components.get.style = "width: 100%; padding: 5px; background: var(--seconder-background-color); border: none; border-radius: var(--border-radius-size);";
         lyrics.components.$.append(lyrics.components.get);
         lyrics.components.lyrics = document.createElement("div");
+        lyrics.components.lyrics.style = "user-select:text;";
         lyrics.components.$.append(lyrics.components.lyrics);
         lyrics.components.info = document.createElement("div");
         lyrics.components.info.innerText = "Lyric data is taken from Genius.\nThis plugin is not supported by Genius.";

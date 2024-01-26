@@ -111,6 +111,8 @@ var components = {
                         backward: null,
                         play_pause: null,
                         forward: null,
+                        volume: null,
+                        volume_slider: null,
                         next: null,
                         speed: null,
                         more: null,
@@ -219,6 +221,25 @@ var components = {
                 },
                 $video: null,
                 $audio: null,
+                $video_gain_node: null,
+                $audio_gain_node: null,
+                $_init_audio_ctx: () => {
+                    ["video", "audio"].forEach(which => {
+                        let audio_ctx = new AudioContext();
+                        let source = audio_ctx.createMediaElementSource(components.tabs.watch.video[`$${which}`]);
+                        components.tabs.watch.video[`$${which}_gain_node`] = audio_ctx.createGain();
+                        components.tabs.watch.video[`$${which}_gain_node`].gain.value = 1;
+                        source.connect(components.tabs.watch.video[`$${which}_gain_node`]);
+                        components.tabs.watch.video[`$${which}_gain_node`].connect(audio_ctx.destination);
+                    });
+                },
+                $_volume: (value) => {
+                    components.tabs.watch.video.$audio_gain_node.gain.value =
+                    components.tabs.watch.video.$video_gain_node.gain.value = value;
+                },
+                $volume: () => {
+                    return components.tabs.watch.video.$audio_gain_node.gain.value;
+                },
                 $listen: false,
                 $audio_tracks: [],
                 $video_tracks: [],
@@ -293,7 +314,8 @@ var components = {
                     } else {
                         components.tabs.watch.video.$video.muted =
                         components.tabs.watch.video.$audio.muted = !components.tabs.watch.video.$audio.muted;
-                    }
+                    };
+                    components.tabs.watch.video.video_player.controls.volume.innerText = ["volume_up", "volume_off"][Number(components.tabs.watch.video.$audio.muted)];
                 },
                 $_listen: (state) => {
                     components.tabs.watch.video.$listen = state;
@@ -670,6 +692,8 @@ components.tabs.watch.video.video_player.controls.backward = components.tabs.wat
 components.tabs.watch.video.video_player.controls.play_pause = components.tabs.watch.video.video_player.controls.$.querySelector(".play-pause");
 components.tabs.watch.video.video_player.controls.forward = components.tabs.watch.video.video_player.controls.$.querySelector(".forward");
 components.tabs.watch.video.video_player.controls.next = components.tabs.watch.video.video_player.controls.$.querySelector(".next");
+components.tabs.watch.video.video_player.controls.volume = components.tabs.watch.video.video_player.controls.$.querySelector(".volume");
+components.tabs.watch.video.video_player.controls.volume_slider = components.tabs.watch.video.video_player.controls.$.querySelector(".volume-slider");
 components.tabs.watch.video.video_player.controls.speed = components.tabs.watch.video.video_player.controls.$.querySelector(".speed");
 components.tabs.watch.video.video_player.controls.more = components.tabs.watch.video.video_player.controls.$.querySelector(".more");
 components.tabs.watch.video.video_player.controls.timelines = components.tabs.watch.video.video_player.controls.$.querySelector(".timelines");
@@ -742,6 +766,7 @@ components.playbar.$.addEventListener("click", event => {
 
 components.playbar.controls.play_pause.addEventListener("click", components.tabs.watch.video.$_play_pause);
 components.playbar.controls.close.addEventListener("click", components.tabs.watch.video.$_unload);
+components.tabs.watch.video.$_init_audio_ctx();
 components.tabs.watch.video.$video.addEventListener("pause", () => {
     components.tabs.watch.video.$_pause();
     if(components.tabs.watch.video.$video.currentTime == components.tabs.watch.video.$video.duration) {
@@ -824,12 +849,21 @@ components.tabs.watch.video.video_player.controls.theatre.addEventListener("clic
 components.tabs.watch.video.video_player.controls.timelines.addEventListener("click", () => {
     components.tabs.watch.video.video_player.controls.details.toggle("timelines");
 });
+components.tabs.watch.video.video_player.controls.volume.addEventListener("click", () => {
+    components.tabs.watch.video.$_mute();
+});
+components.tabs.watch.video.video_player.controls.volume_slider.addEventListener("input", () => {
+    if(components.tabs.watch.video.$muted()){
+        components.tabs.watch.video.$_mute(false);
+    };
+    components.tabs.watch.video.$_volume(components.tabs.watch.video.video_player.controls.volume_slider.value);
+});
 components.tabs.watch.video.video_player.controls.more.addEventListener("click", () => {
     components.tabs.watch.video.video_player.controls.details.toggle("more");
 });
 components.tabs.watch.video.video_player.controls.fullscreen.addEventListener("click", components.tabs.watch.video.$_fullscreen);
 components.tabs.watch.video.video_player.controls.time_slider.addEventListener("input", () => {
-    components.tabs.watch.video.$video.currentTime = components.tabs.watch.video.video_player.controls.time_slider.value;
+    components.tabs.watch.video.$_seekto(components.tabs.watch.video.video_player.controls.time_slider.value);
 });
 
 components.tabs.watch.info.owner.follow.addEventListener("click", async () => {

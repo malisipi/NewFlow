@@ -87,19 +87,14 @@ electron_loaded = () => {
 	components.controls.fullscreen.addEventListener("click", () => {
 	    if(components.$_window.isFullScreen()) {
 	        components.$_window.setFullScreen(false);
+            components.controls.fullscreen.innerText = "fullscreen";
 	    } else {
 	        components.$_window.setFullScreen(true);
+            components.controls.fullscreen.innerText = "fullscreen_exit";
 	    }
 	});
-	/*components.$_window.onMaximized.addListener(() => {
-	    components.controls.fullscreen.innerText = "fullscreen_exit";
-	});*/
-	/*components.$_window.onRestore.addListener(() => {
-	    components.controls.fullscreen.innerText = "fullscreen";
-	});*/
 
-	// Set always on top (not works @ Linux/Wayland)
-
+    // Set always on top (not works @ Linux/Wayland)
 	components.$_window.setAlwaysOnTop(true);
 }
 
