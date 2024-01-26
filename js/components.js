@@ -607,6 +607,10 @@ components.titlebar.menu.addEventListener("click", event => {
 
 document.body.setAttribute("os", components.$.$_os);
 
+if(process.argv.includes("--newflow-system-titlebar")){
+    components.titlebar.button_layout.style.display = "none";
+};
+
 if(components.$.$_os == "linux"){
     window.addEventListener("DocumentReady", async () => {
         // TODO: @@@titlebar.buttonLayout.useSystemLayout<bool>(true||false|true)
