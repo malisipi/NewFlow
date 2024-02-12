@@ -1,3 +1,5 @@
+setup_version = "0.0.2";
+
 import urllib.request;
 from zipfile import ZipFile;
 import tempfile;
@@ -69,6 +71,8 @@ def newflow_install():
          os.rename("C:/Programs/NewFlow/__dbs_backup","C:/Programs/NewFlow/resources/app/dbs");
    else:
       os.rename("C:/Programs/NewFlow/resources/NewFlow-main","C:/Programs/NewFlow/resources/app");
+      if(not os.path.exists("C:/Programs/NewFlow/resources/app/dbs")):
+         os.mkdir("C:/Programs/NewFlow/resources/app/dbs");
 
    update_state("Extracting yt-extractor...");
    zip_archive = ZipFile(temp_dir + "ytextractor.zip");
@@ -84,7 +88,7 @@ def newflow_install():
    show_progress(1,1,1);
 
 setup_window = tkinter.Tk();
-setup_window.title("NewFlow - Setup");
+setup_window.title("NewFlow - Setup " + setup_version);
 setup_window.resizable(False, False);
 setup_window.geometry('400x200');
 setup_window.iconbitmap(sys.executable);
