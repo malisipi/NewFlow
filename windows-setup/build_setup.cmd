@@ -1,0 +1,1 @@
+python -m PyInstaller setup.py --noconsole --onefile -i ../assets/newflow.ico
