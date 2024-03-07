@@ -1,0 +1,7 @@
+mkdir "$HOME/opt/"
+cd "$HOME/opt/"
+git clone https://github.com/malisipi/NewFlow
+cd NewFlow
+git clone https://github.com/malisipi/yt-extractor.js
+mv "yt-extractor.js" "yt-extractor"
+./scripts/install-desktop-file
