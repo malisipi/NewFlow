@@ -7,6 +7,24 @@
 
 > Your free video player client for YouTube™.
 
+## Installation
+
+> [!WARNING]
+> Installers is designed to help end users while installing NewFlow however the installers can have some bugs. If you encounter if any bug, please report it.
+
+### For Windows 10 and above
+
+> You can use the installer that placed in releases section.
+
+### For Linux
+
+> You can run the command that placed below to install NewFlow.
+
+> [!IMPORTANT]
+> `git` and `electron` commands must be installed to use the script.
+
+```curl https://raw.githubusercontent.com/malisipi/NewFlow/main/linux-setup | bash```
+
 ## Licenses
 
 > [!IMPORTANT]
