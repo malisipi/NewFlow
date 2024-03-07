@@ -3,6 +3,7 @@ mkdir -p ~/.local/share/icons/hicolor/scalable/apps/
 cp ./assets/newflow.svg ~/.local/share/icons/hicolor/scalable/apps/newflow.svg
 cp NewFlow.desktop /tmp/_newflow
 echo Icon=$HOME/.local/share/icons/hicolor/scalable/apps/newflow.svg >> /tmp/_newflow
+echo "Categories=AudioVideo;Audio;Video;Player;TV;Network;" >> /tmp/_newflow
 echo Path=$(pwd) >> /tmp/_newflow
 echo Exec=electron $(pwd) $NEWFLOW_FLAGS >> /tmp/_newflow
 cp /tmp/_newflow ~/.local/share/applications/NewFlow.desktop
