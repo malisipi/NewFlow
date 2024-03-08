@@ -632,7 +632,7 @@ if(components.$.$_os == "linux"){
             let output = String(child_process.execSync("echo -n $KDE_SESSION_VERSION"));
             if(output != "") {
                 // Use KDE variant
-                components.titlebar.button_layout.setAttribute("linux-variant", "kde");
+                components.titlebar.button_layout.setAttribute("variant", "kde");
             } // else { Use default Linux (Ubuntu-Yaru) variant }
         } catch {
             console.warn("Unable to get button-layout");
