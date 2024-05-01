@@ -56,7 +56,7 @@ var phantom = {
 (async () => {
     phantom.available = await (async () => {
         if(navigator.userAgentData.platform.toLowerCase().includes("win")){
-            if(!await child_process.spawn("ffmpeg.exe", ["-v"]).error){
+            if((await child_process.spawnSync("where", ["ffmpeg.exe"])).status == 0){
                 return await fs.exists("./phantom/phantom.exe");
             }
         } else {
