@@ -108,5 +108,29 @@
     "no_network_bird": {
         "en": "There're a bird who waits network to fly",
         "tr": "Burada uçabilmek için interneti bekleyen bir kuş var"
+    },
+    "brightness": {
+        "en": "Brightness",
+        "tr": "Parlaklık"
+    },
+    "contrast": {
+        "en": "Contrast",
+        "tr": "Karşıtlık"
+    },
+    "blur": {
+        "en": "Blur",
+        "tr": "Bulanıklaştırma"
+    },
+    "grayscale": {
+        "en": "Grayscale",
+        "tr": "Gri Tonlama"
+    },
+    "invert": {
+        "en": "Invert",
+        "tr": "Ters Çevirme"
+    },
+    "hue_rotate": {
+        "en": "Hue Rotate",
+        "tr": "Ton Değiştirme"
     }
 }

@@ -228,7 +228,7 @@ div.playbar {
     height: var(--playbar-height);
     display: none;
     padding: 0 20px;
-    grid-template-areas: 
+    grid-template-areas:
         "thumbnail title controls"
         "thumbnail owner controls";
     grid-auto-columns: min-content auto min-content;
@@ -304,10 +304,11 @@ dialog#share[open] {
         display: flex;
         gap: 5px;
 
-        & img {
+        & div.masked-symbol {
             width: 32px;
-            aspect-ratio: 1;
-            filter: brightness(0) invert(1);
+            height: 32px;
+            background: var(--text-color);
+            mask-size: 32px !important;
         }
 
         & material-symbol {
@@ -328,7 +329,7 @@ dialog#share[open] {
             height: calc(100% - calc(var(--titlebar-height) + calc(var(--playbar-height) + calc(var(--playbar-spacing) * 1.5))));
         }
     }
-    
+
     & div.playbar {
         display: grid;
     }

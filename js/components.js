@@ -1,4 +1,3 @@
-
 // Define main components
 
 var components = {
@@ -340,7 +339,7 @@ var components = {
                     let state = components.tabs.watch.video.$_get_state();
                     components.tabs.watch.video.$_pause();
 
-					// TODO: Port the code into yt-extractor.js 
+					// TODO: Port the code into yt-extractor.js
                     let xhr = new XMLHttpRequest();
                     let url = components.tabs.watch.video[`$${type}_tracks`].at(id).url;
                     if(components.tabs.watch.video.$listen) { // If video disabled
@@ -477,7 +476,8 @@ var components = {
             next_videos: null,
             panels: {
                 $: null,
-                autoplay: null
+                autoplay: null,
+                playing_queue: null
             },
             info: {
                 $: null,
@@ -711,6 +711,7 @@ components.tabs.watch.video.video_player.controls.time_info.duration = component
 components.tabs.watch.video.video_player.controls.details.$$.speed = components.tabs.watch.video.video_player.$.querySelector(".details.speed");
 components.tabs.watch.video.video_player.controls.details.$$.captions = components.tabs.watch.video.video_player.$.querySelector(".details.captions");
 components.tabs.watch.video.video_player.controls.details.$$.more = components.tabs.watch.video.video_player.$.querySelector(".details.more");
+components.tabs.watch.video.video_player.controls.details.$$.filter = components.tabs.watch.video.video_player.$.querySelector(".details.filter");
 components.tabs.watch.video.video_player.controls.details.$$.timelines = components.tabs.watch.video.video_player.$.querySelector(".details.timelines");
 components.tabs.watch.video.video_player.controls.details.$$.audio_quality = components.tabs.watch.video.video_player.$.querySelector(".details.audio-quality");
 components.tabs.watch.video.video_player.controls.details.$$.video_quality = components.tabs.watch.video.video_player.$.querySelector(".details.video-quality");
@@ -718,6 +719,7 @@ components.tabs.watch.comments = components.tabs.watch.$.querySelector(".comment
 components.tabs.watch.next_videos = components.tabs.watch.$.querySelector(".next-videos");
 components.tabs.watch.panels.$ = components.tabs.watch.$.querySelector(".panels");
 components.tabs.watch.panels.autoplay = components.tabs.watch.panels.$.querySelector("input.autoplay");
+components.tabs.watch.panels.playing_queue = components.tabs.watch.panels.$.querySelector("div.playing-queue");
 components.tabs.watch.info.$ = components.tabs.watch.$.querySelector(".info");
 components.tabs.watch.info.title = components.tabs.watch.info.$.querySelector(".title");
 components.tabs.watch.info.description = components.tabs.watch.info.$.querySelector(".description");
@@ -741,7 +743,7 @@ components.tabs.following.$ = components.tabs.$.querySelector("#following");
 components.tabs.feed.$ = components.tabs.$.querySelector("#feed");
 components.tabs.downloads.$ = components.tabs.$.querySelector("#downloads");
 components.tabs.offline.$ = components.tabs.$.querySelector("#offline");
-components.tabs.queue.$ = components.tabs.$.querySelector("#offline");
+components.tabs.queue.$ = components.tabs.$.querySelector("#queue");
 
 // Add event listeners
 
@@ -868,6 +870,18 @@ components.tabs.watch.video.video_player.controls.more.addEventListener("click",
 components.tabs.watch.video.video_player.controls.fullscreen.addEventListener("click", components.tabs.watch.video.$_fullscreen);
 components.tabs.watch.video.video_player.controls.time_slider.addEventListener("input", () => {
     components.tabs.watch.video.$_seekto(components.tabs.watch.video.video_player.controls.time_slider.value);
+});
+
+Array.from(components.tabs.watch.video.video_player.controls.details.$$.filter.querySelectorAll("input[css-target]")).forEach(element => {
+    element.addEventListener("input", event => {
+        components.tabs.watch.video.$video.style.setProperty(event.target.getAttribute("css-target"), event.target.value + (event.target.getAttribute("suffix") ?? ""));
+    });
+});
+components.tabs.watch.video.video_player.controls.details.$$.filter.querySelector("button").addEventListener("click", () => {
+    Array.from(components.tabs.watch.video.video_player.controls.details.$$.filter.querySelectorAll("input[css-target]")).forEach(element => {
+        element.value = element.getAttribute("default-value");
+    });
+    components.tabs.watch.video.$video.setAttribute("style", "");
 });
 
 components.tabs.watch.info.owner.follow.addEventListener("click", async () => {

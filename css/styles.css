@@ -1,5 +1,9 @@
 @import url(./background-material.css);
 
+*, *:before, *:after { /* Disable forcing high contrast theme due to causing unreadable text and low contrast */
+    forced-color-adjust: none !important;
+}
+
 body {
     --border-thick: 2px;
     --border-radius-size: 5px;
@@ -45,7 +49,7 @@ body {
         --theme-hover-color: #999999;
         --theme-text-color: #000000;
         --effect-color-percent: 50%;
-        
+
         & * {
             color-scheme: light;
         }
@@ -88,7 +92,7 @@ body {
 }
 
 ::-webkit-scrollbar-track, ::-webkit-scrollbar-corner {
-    background: transparent; 
+    background: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
@@ -97,7 +101,7 @@ body {
     background: var(--other-color);
     border-radius: var(--border-radius-size);
 }
- 
+
 ::-webkit-scrollbar-button:single-button {
     background: var(--other-color);
     border-radius: var(--border-radius-size);
@@ -137,14 +141,14 @@ input[type="range"] {
     border-radius: 5px;
     clip-path: inset(0 round 10px);
 }
-  
+
 input[type="range"]::-webkit-slider-runnable-track {
     width: 100%;
     background: var(--theme-background-color);
     height: 12px;
     border-radius: 5px;
 }
-  
+
 input[type="range"]::-webkit-slider-thumb {
     appearance: none;
     height: 12px;
@@ -263,7 +267,7 @@ body:has(div.tabs[active="bookmarks"]) .sidenav:not([open]) div[tab="bookmarks"]
 #watch {
     display: flex;
     gap: 10px;
-    
+
     @media (max-width: 700px) {
         flex-direction: column;
     }
@@ -303,21 +307,21 @@ body:has(div.tabs[active="bookmarks"]) .sidenav:not([open]) div[tab="bookmarks"]
                 pointer-events: none !important;
 
                 opacity: 0.75 !important;
-            
+
                 position: relative;
                 height: 65px;
                 width: 65px;
                 left: 50%;
                 top: 50%;
-            
+
                 grid-row-start: video-start;
                 grid-column-start: video-start;
                 grid-row-end: controls-end;
                 grid-column-end: controls-end;
-                
+
                 animation: loading-circle cubic-bezier(0.4, 0.25, 0.6, 0.75) 1.5s infinite;
                 animation-delay: 0ms;
-            
+
                 border-radius: 50%;
                 border-top-color: var(--effect-color) !important;
                 border-color: var(--background-color);
@@ -350,6 +354,7 @@ body:has(div.tabs[active="bookmarks"]) .sidenav:not([open]) div[tab="bookmarks"]
                     top: 0;
                     background: inherit;
                     margin-bottom: 10px;
+                    z-index: 1;
 
                     &::after {
                         content: ".";
@@ -383,6 +388,29 @@ body:has(div.tabs[active="bookmarks"]) .sidenav:not([open]) div[tab="bookmarks"]
 
                         &:hover {
                             background: var(--hover-color);
+                        }
+                    }
+                }
+
+                &.filter {
+                    & > div {
+                        display: flex;
+                        flex-direction: column;
+                        gap: 4px;
+                        background: inherit;
+
+                        & div {
+                            display: flex;
+                            flex-direction: column;
+                            gap: 4px;
+                        }
+
+                        & button {
+                            margin-top: 8px;
+                            min-height: 24px;
+                            background: var(--other-color);
+                            border: none;
+                            border-radius: var(--border-radius-size);
                         }
                     }
                 }
@@ -459,7 +487,7 @@ body:has(div.tabs[active="bookmarks"]) .sidenav:not([open]) div[tab="bookmarks"]
             & .controls {
                 grid-area: controls;
                 background: linear-gradient(
-                    0deg, 
+                    0deg,
                     var(--background-color),
                     color-mix(in srgb, var(--background-color) 50%, transparent)
                 );
@@ -477,7 +505,6 @@ body:has(div.tabs[active="bookmarks"]) .sidenav:not([open]) div[tab="bookmarks"]
                 & .time-info {
                     padding: 0 2px;
                 }
-
 
                 .hide-range {
                     display: flex;
@@ -521,14 +548,14 @@ body:has(div.tabs[active="bookmarks"]) .sidenav:not([open]) div[tab="bookmarks"]
                     "keywords";
 
             }
-        
+
             & .title {
                 grid-area: title;
                 font-size: 25px;
                 padding: 4px;
                 text-overflow: ellipsis;
                 overflow: hidden;
-                text-wrap: nowrap;        
+                text-wrap: nowrap;
             }
 
             & .owner {
@@ -538,7 +565,7 @@ body:has(div.tabs[active="bookmarks"]) .sidenav:not([open]) div[tab="bookmarks"]
                     width: unset;
                 }
             }
-        
+
             & .controls {
                 grid-area: controls;
                 display: flex;
@@ -589,19 +616,19 @@ body:has(div.tabs[active="bookmarks"]) .sidenav:not([open]) div[tab="bookmarks"]
                     }
                 }
             }
-        
+
             & .description {
                 grid-area: description;
                 user-select: text;
                 word-break: break-word;
             }
-        
+
             & .keywords {
                 grid-area: keywords;
                 display: flex;
                 flex-wrap: wrap;
                 gap: 5px;
-            
+
                 & > * {
                     background: var(--effect-color);
                     padding: 5px;
@@ -635,6 +662,10 @@ body:has(div.tabs[active="bookmarks"]) .sidenav:not([open]) div[tab="bookmarks"]
         }
 
         & .panels {
+            gap: 10px;
+            display: flex;
+            flex-direction: column;
+
             & .autoplay {
                 display: flex;
                 align-items: center;
@@ -647,7 +678,7 @@ body:has(div.tabs[active="bookmarks"]) .sidenav:not([open]) div[tab="bookmarks"]
                 max-height: min(max(30vh, 300px), 65vh);
                 overflow-y: auto;
                 gap: 2px;
-                padding-right: 4px;            
+                padding-right: 4px;
             }
         }
 
@@ -761,10 +792,10 @@ dialog#share[open] {
                 }
             }
         }
-        
+
         &[open] > summary {
             margin-bottom: 10px;
-            
+
             &::before {
                 content: "arrow_back";
                 margin-right: 4px;
@@ -884,7 +915,7 @@ video::cue {
             "thumbnail owner";
         align-items: center;
         gap: 4px;
-        
+
         &.active {
             background: var(--other-color);
         }

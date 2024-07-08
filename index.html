@@ -22,12 +22,12 @@
     <script @src="./js/thirdparty/hls.light.min.js" full-defer></script>
     <script @src="./js/plugins.js" full-defer></script>
     <script>
-      document.addEventListener('readystatechange', event => { 
+      document.addEventListener('readystatechange', event => {
           if (event.target.readyState === "complete") {
             window.dispatchEvent(new CustomEvent("DocumentReady"));
             document.querySelectorAll("script[full-defer]").forEach(tag => {
               tag.setAttribute("src", tag.getAttribute("@src"));
-            });              
+            });
           };
       });
     </script>
@@ -106,8 +106,8 @@
       <div class="primary-flow">
         <div class="video-player">
           <img class="thumbnail" />
-          <video preload="auto"></video>
-          <audio preload="auto"></audio>
+          <video preload="auto" crossorigin="anonymous"></video>
+          <audio preload="auto" crossorigin="anonymous"></audio>
           <div class="details list speed" hidden>
             <div class="title"><language-pack key="playback_speed"></language-pack></div>
             <div class="list-item" value="0.25">0.25</div>
@@ -129,7 +129,18 @@
             <div class="list-item video-quality" value="video_quality"><material-symbol>video_settings</material-symbol> <language-pack key="video_quality"></language-pack></div>
             <div class="list-item audio-quality" value="audio_quality"><material-symbol>tune</material-symbol> <language-pack key="audio_quality"></language-pack></div>
           </div>
-          <div class="details filter" hidden></div>
+          <div class="details filter" hidden>
+            <div>
+                <div class="title"><language-pack key="filters"></language-pack></div>
+                <div><div><language-pack key="brightness"></language-pack>:</div><input class="brightness" type="range" min="0" max="2" step="0.01" value="1" default-value="1" css-target="--filter-brightness"/></div>
+                <div><div><language-pack key="contrast"></language-pack>:</div><input class="contrast" type="range" min="0" max="2" step="0.01" value="1" default-value="1" css-target="--filter-contrast"/></div>
+                <div><div><language-pack key="blur"></language-pack>:</div><input class="blur" type="range" min="0" max="30" step="1" value="0" default-value="0" suffix="px" css-target="--filter-blur"/></div>
+                <div><div><language-pack key="grayscale"></language-pack>:</div><input class="grayscale" type="range" min="0" max="1" step="0.01" value="0" default-value="0" css-target="--filter-grayscale"/></div>
+                <div><div><language-pack key="invert"></language-pack>:</div><input class="invert" type="range" min="0" max="1" step="0.01" value="0" default-value="0" css-target="--filter-invert"/></div>
+                <div><div><language-pack key="hue_rotate"></language-pack>:</div><input class="hue-rotate" type="range" min="0" max="360" step="0" value="0" default-value="0" suffix="deg" css-target="--filter-hue-rotate"/></div>
+                <button class="reset">Reset</button>
+            </div>
+          </div>
           <div class="details list timelines" hidden></div>
           <div class="details list video-quality" hidden></div>
           <div class="details list audio-quality" hidden></div>
@@ -247,9 +258,9 @@
     <material-symbol class="close">close</material-symbol>
     <div class="title"><language-pack key="share"></language-pack></div>
     <div class="actions">
-      <div><img class="twitter-x" draggable="false" src="./assets/bootstrap-icons/twitter-x.svg"></div>
-      <div><img class="whatsapp" draggable="false" src="./assets/bootstrap-icons/whatsapp.svg"></div>
-      <div><img class="telegram" draggable="false" src="./assets/bootstrap-icons/telegram.svg"></div>
+      <div class="twitter-x masked-symbol" style="mask: url(./assets/bootstrap-icons/twitter-x.svg);"></div>
+      <div class="whatsapp masked-symbol" style="mask: url(./assets/bootstrap-icons/whatsapp.svg);"></div>
+      <div class="telegram masked-symbol" style="mask: url(./assets/bootstrap-icons/telegram.svg);"></div>
       <div><material-symbol class="copy-link">link</material-symbol></div>
       <div><material-symbol class="open-in-browser">globe</material-symbol></div>
     </div>

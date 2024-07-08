@@ -30,8 +30,10 @@ var render = {
             title.className = "title";
             title.innerText = video_info?.title;
             video.append(title);
-            video.addEventListener("click", (_, _id=video_info?.id) => {
-                components.tabs.watch.video.$_clear_queue();
+            video.addEventListener("click", (_, _id=video_info?.id, keep_queue=video_info?.keep_queue) => {
+                if(keep_queue != true){
+                    components.tabs.watch.video.$_clear_queue();
+                }
                 components.tabs.$_switch("watch");
                 render.watch(_id);
             })
@@ -123,7 +125,7 @@ var render = {
             element.innerHTML = "";
             let active_track = components.tabs.watch.video.$_queue_active();
             components.tabs.watch.video.$queue.forEach((video_preview, index) => {
-                let preview = render.$.video_preview("list", video_preview);
+                let preview = render.$.video_preview("list", {...video_preview, keep_queue:true});
                 if(active_track == index){
                     preview.className += " active";
                 };
@@ -352,6 +354,10 @@ var render = {
                 components.tabs.watch.info.owner.follow.innerText = "notifications";
             }
         })();
+
+        // Update playing queue
+        render.$.queue(components.tabs.watch.panels.playing_queue);
+        render.$.queue(components.tabs.queue.$);
     },
     search: async (query) => {
         components.tabs.$_switch("search");
