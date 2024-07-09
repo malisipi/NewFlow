@@ -1,5 +1,6 @@
 var yt_extractor = require("./yt-extractor");
 var fs = require("node:fs/promises");
+var path = require('node:path');
 window.addEventListener("DocumentReady", () => {
     window.http = require("node:http");
     window.https = require("node:https");

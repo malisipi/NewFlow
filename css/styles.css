@@ -277,6 +277,16 @@ body:has(div.tabs[active="bookmarks"]) .sidenav:not([open]) div[tab="bookmarks"]
         & .primary-flow .video-player {
             max-height: calc(100vh - calc(var(--titlebar-height) + 50px));
         }
+
+        & .seconder-flow {
+            max-width: unset;
+            min-width: unset;
+
+            & .next-videos {
+                flex-direction: row;
+                flex-wrap: wrap;
+            }
+        }
     }
 
     & .primary-flow {
@@ -650,6 +660,10 @@ body:has(div.tabs[active="bookmarks"]) .sidenav:not([open]) div[tab="bookmarks"]
             min-width: 250px;
             max-width: 250px;
         }
+        @media (min-width: 1500px) {
+            min-width: 325px;
+            max-width: 325px;
+        }
 
         & > * {
             padding: 5px;
@@ -686,6 +700,8 @@ body:has(div.tabs[active="bookmarks"]) .sidenav:not([open]) div[tab="bookmarks"]
             gap: 10px;
             display: flex;
             flex-direction: column;
+            align-items: center;
+            justify-content: center;
         }
     }
 }

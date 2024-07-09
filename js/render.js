@@ -131,6 +131,29 @@ var render = {
                 };
                 element.append(preview);
             });
+        },
+        thumbar_buttons: (is_playing) => {
+            components.$.$_window.setThumbarButtons([
+                {
+                    tooltip: "Previous",
+                    icon: electron.nativeImage.createFromPath(path.join(__dirname, "assets/material-symbols/skip_previous.png")),
+                    click: () => {
+                        components.tabs.watch.video.$_previous();
+                    }
+                }, {
+                    tooltip: (is_playing) ? "Pause" : "Play",
+                    icon: electron.nativeImage.createFromPath(path.join(__dirname, "assets/material-symbols/" + ((is_playing) ? "pause" : "play_arrow") + ".png")),
+                    click: () => {
+                        components.tabs.watch.video.$_play_pause();
+                    }
+                }, {
+                    tooltip: "Next",
+                    icon: electron.nativeImage.createFromPath(path.join(__dirname, "assets/material-symbols/skip_next.png")),
+                    click: () => {
+                        components.tabs.watch.video.$_next();
+                    }
+                }
+            ]);
         }
     },
     trends: async () => {

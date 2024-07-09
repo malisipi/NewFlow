@@ -317,7 +317,30 @@ var components = {
                     components.tabs.watch.video.video_player.controls.volume.innerText = ["volume_up", "volume_off"][Number(components.tabs.watch.video.$audio.muted)];
                 },
                 $_listen: (state) => {
+                    if(state == components.tabs.watch.video.$listen) return;
+                    if(state == undefined) state = !components.tabs.watch.video.$listen;
                     components.tabs.watch.video.$listen = state;
+                    let playing_state = components.tabs.watch.video.$_get_state();
+                    components.tabs.watch.video.$_pause();
+                    components.tabs.watch.video.$video.addEventListener("load", () => {
+                        components.tabs.watch.video.$_apply_state(playing_state);
+                    }, {once:true});
+                    if(state == true){
+                        components.tabs.watch.video.$video.src = components.tabs.watch.video.$audio.src;
+                        components.tabs.watch.video.$audio.removeAttribute("src");
+                        components.tabs.watch.video.$audio.load();
+                        components.tabs.watch.video.$_apply_state(playing_state);
+                    } else {
+                        components.tabs.watch.video.$video.addEventListener("load", () => {
+                            components.tabs.watch.video.$_apply_state(playing_state);
+                        }, {once:true});
+                        components.tabs.watch.video.$video.addEventListener("canplay", () => {
+                            components.tabs.watch.video.$_apply_state(playing_state);
+                        }, {once:true});
+                        components.tabs.watch.video.$_change_stream("audio", -1);
+                        components.tabs.watch.video.$_change_stream("video", -1);
+                        components.tabs.watch.video.$_apply_state(playing_state);
+                    };
                 },
                 $_share: async () => {
                     components.share.$_share("https://youtube.com/watch?v="+components.tabs.watch.$$response.id);
@@ -328,9 +351,11 @@ var components = {
                         current_time: components.tabs.watch.video.$current_time()
                     });
                 },
-                $_apply_state: (state) => {
-                    if(state.is_playing != components.tabs.watch.video.$is_playing()) {
-                        components.tabs.watch.video.$_play_pause();
+                $_apply_state: async (state) => {
+                    if(state.is_playing) {
+                        await components.tabs.watch.video.$_play();
+                    } else {
+                        await components.tabs.watch.video.$_pause();
                     };
                     components.tabs.watch.video.$_seekto(state.current_time);
                 },
@@ -437,6 +462,7 @@ var components = {
                 $pip: {
                     $is_pip: false,
                     $_window: null,
+                    $_load_state: () => {},
                     $_create_pip: () => {
                         if(components.tabs.watch.video.$pip.$is_pip) return;
                         components.tabs.watch.video.$pip.$is_pip = true;
@@ -447,9 +473,9 @@ var components = {
 	                        components.tabs.watch.video.$pip.$_window.electron_loaded();
                             components.tabs.watch.video.$_pause();
                             components.tabs.watch.video.$pip.$_window.document.body.querySelector(".video-container").append(components.tabs.watch.video.$video);
-                            components.tabs.watch.video.$_play();
+                            components.tabs.watch.video.$pip.$_load_state();
                             components.tabs.watch.video.$pip.$_window.addEventListener("unload", () => {
-                                components.tabs.watch.video.$pip.$_deattach_video();
+                                components.tabs.watch.video.$pip.$_toggle(false);
                             });
                         });
                     },
@@ -458,16 +484,23 @@ var components = {
                         components.tabs.watch.video.$pip.$is_pip = false;
                         components.tabs.watch.video.$_pause();
                         document.querySelector(".primary-flow .video-player").insertAdjacentElement("afterbegin", components.tabs.watch.video.$video);
-                        components.tabs.watch.video.$_play();
+                        components.tabs.watch.video.$pip.$_load_state();
                         if(!components.tabs.watch.video.$pip.$_window.closed) {
                             components.tabs.watch.video.$pip.$_window.close();
                         }
                     },
-                    $_toggle: () => {
-                        if(components.tabs.watch.video.$pip.$is_pip){
-                            components.tabs.watch.video.$pip.$_deattach_video();
-                        } else {
+                    $_toggle: (is_toggle=null) => {
+                        let playing_state = components.tabs.watch.video.$_get_state();
+                        if(is_toggle == null){
+                            is_toggle = !components.tabs.watch.video.$pip.$is_pip;
+                        };
+                        components.tabs.watch.video.$pip.$_load_state = (_playing_state = playing_state) => {
+                            components.tabs.watch.video.$_apply_state(_playing_state);
+                        };
+                        if(is_toggle){
                             components.tabs.watch.video.$pip.$_create_pip();
+                        } else {
+                            components.tabs.watch.video.$pip.$_deattach_video();
                         };
                     }
                 }
@@ -784,6 +817,7 @@ components.tabs.watch.video.$video.addEventListener("pause", () => {
         components.tabs.watch.video.video_player.controls.play_pause.innerText = "play_arrow";
         components.playbar.controls.play_pause.innerText = "play_arrow";
     };
+    render.$.thumbar_buttons(false);
 });
 components.playbar.controls.queue.addEventListener("click", () => {
     components.tabs.$_switch("queue");
@@ -792,6 +826,7 @@ components.tabs.watch.video.$video.addEventListener("play", () => {
     components.tabs.watch.video.$_play();
     components.tabs.watch.video.video_player.controls.play_pause.innerText = "pause";
     components.playbar.controls.play_pause.innerText = "pause";
+    render.$.thumbar_buttons(true);
 });
 components.tabs.watch.video.$video.addEventListener("durationchange", () => {
     components.tabs.watch.video.video_player.controls.time_info.duration.innerText = components.$_human_readable_time(components.tabs.watch.video.$video.duration);
@@ -902,7 +937,9 @@ components.tabs.watch.info.owner.follow.addEventListener("click", async () => {
 
 components.tabs.watch.info.controls.like.addEventListener("click", console.warn);
 components.tabs.watch.info.controls.playlist_add.addEventListener("click", console.warn);
-components.tabs.watch.info.controls.listen.addEventListener("click", console.warn);
+components.tabs.watch.info.controls.listen.addEventListener("click", () => {
+    components.tabs.watch.video.$_listen();
+});
 components.tabs.watch.info.controls.pip.addEventListener("click", () => {
     components.tabs.watch.video.$pip.$_toggle();
 });

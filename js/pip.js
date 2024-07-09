@@ -1,5 +1,5 @@
 var components = {
-    $_human_readable_time: time => `${Math.floor(time/60)}:${String(Math.floor(time%60)).padStart(2,"0")}`,
+    $_human_readable_time: time => `${(time>=3600)?Math.floor(time/3600)+":":""}${(String(Math.floor(time/60)%60).length==1 && time>=3600)?"0":""}${Math.floor(time/60)%60}:${String(Math.floor(time%60)).padStart(2,"0")}`,
     $_window: null,
     controls: {
         close: document.querySelector(".close"),
