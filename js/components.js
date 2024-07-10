@@ -364,8 +364,6 @@ var components = {
                     let state = components.tabs.watch.video.$_get_state();
                     components.tabs.watch.video.$_pause();
 
-					// TODO: Port the code into yt-extractor.js
-                    let xhr = new XMLHttpRequest();
                     let url = components.tabs.watch.video[`$${type}_tracks`].at(id).url;
                     if(components.tabs.watch.video.$listen) { // If video disabled
                         if(type == "video") {
@@ -373,30 +371,8 @@ var components = {
                         };
                         type = "video";
                     }
-                    xhr.open('head', url, true);
-
-                    xhr.onreadystatechange = async () => {
-                        if (xhr.readyState === 4){
-                            if (xhr.getResponseHeader("content-type") == "text/plain") {
-                                if(xhr.status == 0 ||
-                                   xhr.status == 403 ||
-                                   xhr.status == 404 ||
-                                   xhr.getResponseHeader("content-length") < 20){
-                                    return console.warn("Failed to bypass throlling");
-                                };
-                                console.warn("Throlling the media");
-                                let req = await fetch(url);
-                                url = await req.text();
-                                xhr.open('head', url, true);
-                                xhr.send(null);
-                            } else {
-                                components.tabs.watch.video[`$${type}`].src = url;
-                            };
-                            return components.tabs.watch.video.$_apply_state(state);
-                        };
-                    };
-
-                    xhr.send(null);
+                    components.tabs.watch.video[`$${type}`].src = await yt_extractor.video.get_real_stream_uri(url);
+                    components.tabs.watch.video.$_apply_state(state);
                 },
                 $_fullscreen: async () => {
                     if(document.fullscreenElement != components.tabs.watch.video.video_player.$){
@@ -943,8 +919,8 @@ components.tabs.watch.info.controls.listen.addEventListener("click", () => {
 components.tabs.watch.info.controls.pip.addEventListener("click", () => {
     components.tabs.watch.video.$pip.$_toggle();
 });
-components.tabs.watch.info.controls.download.addEventListener("click", () => {
-    components.tabs.downloads.$_download(components.tabs.watch.$$response.relatedStreams[0].url, {
+components.tabs.watch.info.controls.download.addEventListener("click", async () => {
+    components.tabs.downloads.$_download(await yt_extractor.video.get_real_stream_uri(components.tabs.watch.$$response.relatedStreams[0].url), {
         title: components.tabs.watch.$$response.title,
         thumbnail: components.tabs.watch.$$response.thumbnails[0].url,
         owner_name: components.tabs.watch.$$response.owner.name,
