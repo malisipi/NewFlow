@@ -193,26 +193,54 @@ var render = {
             };
         };
 
+        if(components.tabs.watch.video.$hls != null){
+            components.tabs.watch.video.$hls.destroy();
+            components.tabs.watch.video.$hls = null;
+        };
+
         components.tabs.watch.video.$_unload();
+        
         components.tabs.watch.video.$video_tracks = [];
         components.tabs.watch.video.$audio_tracks = [];
         components.tabs.watch.video.$related_tracks = [];
-        ([
-            [response.videoStreams, components.tabs.watch.video.$video_tracks],
-            [response.audioStreams, components.tabs.watch.video.$audio_tracks],
-            [response.relatedStreams, components.tabs.watch.video.$related_tracks]
-        ]).map(target => {
-            target[0].map(stream => {
-                if(stream.url == null) {
-                    stream.url = yt_extractor.video.solve_signature_cipher_url(stream.signatureCipher);
-                }
-                stream.url = yt_extractor.video.solve_n_param(stream.url);
-                target[1].push(stream);
+        if(!components.tabs.watch.$$response.isLiveNow){
+            ([
+                [response.videoStreams, components.tabs.watch.video.$video_tracks],
+                [response.audioStreams, components.tabs.watch.video.$audio_tracks],
+                [response.relatedStreams, components.tabs.watch.video.$related_tracks]
+            ]).map(target => {
+                target[0].map(stream => {
+                    if(stream.url == null) {
+                        stream.url = yt_extractor.video.solve_signature_cipher_url(stream.signatureCipher);
+                    }
+                    stream.url = yt_extractor.video.solve_n_param(stream.url);
+                    target[1].push(stream);
+                });
             });
-        });
-
-        components.tabs.watch.video.$_change_stream("video", -1);
-        components.tabs.watch.video.$_change_stream("audio", -1);
+        } else {
+            // Since Newflow pip is not compatible with live streams
+            // Close Newflow pip until live stream ends.
+            if(components.tabs.watch.video.$pip.$is_pip){
+                components.tabs.watch.video.$pip.$toggle();
+            }
+            components.tabs.watch.video.$hls = new Hls();
+            components.tabs.watch.video.$hls.loadSource(components.tabs.watch.$$response.hls);
+            components.tabs.watch.video.$hls.attachMedia(components.tabs.watch.video.$video);
+            components.tabs.watch.video.$hls.on(Hls.Events.MANIFEST_PARSED,function() {
+                components.tabs.watch.video.$video_tracks = components.tabs.watch.video.$hls.levels.map(a=>a.height+"p");
+                render.$.video_player_details(
+                    components.tabs.watch.video.video_player.controls.details.$$.video_quality,
+                    components.tabs.watch.video.$video_tracks,
+                    i18n.text("video_quality")
+                );
+                video.play();
+            });
+        }
+        
+        if(!components.tabs.watch.$$response.isLiveNow){
+            components.tabs.watch.video.$_change_stream("video", -1);
+            components.tabs.watch.video.$_change_stream("audio", -1);
+        }
 
         components.playbar.controls.play_pause.innerText = "play_arrow";
         components.tabs.watch.video.video_player.controls.play_pause.innerText = "play_arrow";

@@ -224,6 +224,7 @@ var components = {
                 },
                 $video: null,
                 $audio: null,
+                $hls: null,
                 $video_gain_node: null,
                 $audio_gain_node: null,
                 $_init_audio_ctx: () => {
@@ -321,6 +322,7 @@ var components = {
                     components.tabs.watch.video.video_player.controls.volume.innerText = ["volume_up", "volume_off"][Number(components.tabs.watch.video.$audio.muted)];
                 },
                 $_listen: (state) => {
+                    if(components.tabs.watch.video.$hls != null) return; // If live stream
                     if(state == components.tabs.watch.video.$listen) return;
                     if(state == undefined) state = !components.tabs.watch.video.$listen;
                     components.tabs.watch.video.$listen = state;
@@ -365,18 +367,22 @@ var components = {
                 },
                 $_change_stream: async (type, id) => {
                     if(!(type == "video" || type == "audio")) return;
-                    let state = components.tabs.watch.video.$_get_state();
-                    components.tabs.watch.video.$_pause();
+                    if(components.tabs.watch.video.$hls == null){
+                        let state = components.tabs.watch.video.$_get_state();
+                        components.tabs.watch.video.$_pause();
 
-                    let url = components.tabs.watch.video[`$${type}_tracks`].at(id).url;
-                    if(components.tabs.watch.video.$listen) { // If video disabled
-                        if(type == "video") {
-                            return components.tabs.watch.video.$_apply_state(state);
+                        let url = components.tabs.watch.video[`$${type}_tracks`].at(id).url;
+                        if(components.tabs.watch.video.$listen) { // If video disabled
+                            if(type == "video") {
+                                return components.tabs.watch.video.$_apply_state(state);
+                            };
+                            type = "video";
                         };
-                        type = "video";
+                        components.tabs.watch.video[`$${type}`].src = await yt_extractor.video.get_real_stream_uri(url);
+                        components.tabs.watch.video.$_apply_state(state);
+                    } else { // It's a live video, so give control to hls.js
+                        components.tabs.watch.video.$hls.currentLevel = Number(id);
                     }
-                    components.tabs.watch.video[`$${type}`].src = await yt_extractor.video.get_real_stream_uri(url);
-                    components.tabs.watch.video.$_apply_state(state);
                 },
                 $_fullscreen: async () => {
                     if(document.fullscreenElement != components.tabs.watch.video.video_player.$){
@@ -455,7 +461,7 @@ var components = {
                             components.tabs.watch.video.$pip.$_window.document.body.querySelector(".video-container").append(components.tabs.watch.video.$video);
                             components.tabs.watch.video.$pip.$_load_state();
                             components.tabs.watch.video.$pip.$_window.addEventListener("unload", () => {
-                                components.tabs.watch.video.$pip.$_toggle(false);
+                                components.tabs.watch.video.$pip.$toggle(false);
                             });
                         });
                     },
@@ -469,7 +475,11 @@ var components = {
                             components.tabs.watch.video.$pip.$_window.close();
                         }
                     },
-                    $_toggle: (is_toggle=null) => {
+                    $toggle: (is_toggle=null) => {
+                        if(components.tabs.watch.video.$hls != null){ // If it's live stream
+                            // Use electron pip since hls.js is incompatible with NewFlow pip.
+                            components.tabs.watch.video.$video.requestPictureInPicture();
+                        }
                         let playing_state = components.tabs.watch.video.$_get_state();
                         if(is_toggle == null){
                             is_toggle = !components.tabs.watch.video.$pip.$is_pip;
@@ -921,9 +931,15 @@ components.tabs.watch.info.controls.listen.addEventListener("click", () => {
     components.tabs.watch.video.$_listen();
 });
 components.tabs.watch.info.controls.pip.addEventListener("click", () => {
-    components.tabs.watch.video.$pip.$_toggle();
+    components.tabs.watch.video.$pip.$toggle();
 });
 components.tabs.watch.info.controls.download.addEventListener("click", async () => {
+    if(components.tabs.watch.video.$hls != null) {
+        return await electron.dialog.showMessageBox({message:"Live Streams can not be downloaded", type:"warning"});
+    };
+    if(components.tabs.watch.$$response.relatedStreams.length == 0) {
+        return await electron.dialog.showMessageBox({message:"No related stream can not be found.\nTry again later.", type:"warning"});
+    }
     components.tabs.downloads.$_download(await yt_extractor.video.get_real_stream_uri(components.tabs.watch.$$response.relatedStreams[0].url), {
         title: components.tabs.watch.$$response.title,
         thumbnail: components.tabs.watch.$$response.thumbnails[0].url,
