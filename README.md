@@ -48,7 +48,6 @@
 - [yt-extractor.js](https://github.com/malisipi/yt-extractor.js) is licensed by [Apache 2.0 License](https://github.com/malisipi/yt-extractor.js/blob/main/LICENSE).
     - Sub dependencies:
         - [fast-xml-parse](https://www.npmjs.com/package/fast-xml-parser) is licensed by [MIT License](https://github.com/NaturalIntelligence/fast-xml-parser/blob/master/LICENSE).
-- [Whisper.cpp](https://github.com/ggerganov/whisper.cpp) is licensed by [MIT License](https://github.com/ggerganov/whisper.cpp/blob/master/LICENSE).
 - [node-vibrant](https://github.com/Vibrant-Colors/node-vibrant) is licensed by [MIT License](https://github.com/Vibrant-Colors/node-vibrant/blob/master/LICENSE.md).
     - Script file placed in `./js/thirdparty/vibrant.js`.
 - [hls.js](https://github.com/video-dev/hls.js) is licensed by [Apache 2.0 License](https://github.com/video-dev/hls.js/blob/master/LICENSE).
