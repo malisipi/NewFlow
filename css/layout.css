@@ -334,8 +334,3 @@ dialog#share[open] {
         display: grid;
     }
 }
-
-/* Phantom */
-:is(body):not([phantom="true"]) [value="phantom"] {
-    display: none !important;
-}

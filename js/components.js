@@ -431,12 +431,6 @@ var components = {
                             };
                         },
                         $: async (id) => {
-                            if (id == "phantom") {
-                                phantom.run(
-                                    components.tabs.watch.video.$audio_tracks.at(-1).url
-                                );
-                                return;
-                            }
                             components.tabs.watch.video.$captions.$_remove();
                             let url = components.tabs.watch.$$response.captions[id].baseUrl;
                             let response = await fetch(url);

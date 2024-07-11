@@ -304,10 +304,6 @@ body:has(div.tabs[active="bookmarks"]) .sidenav:not([open]) div[tab="bookmarks"]
                 "controls controls";
             border-radius: var(--border-radius-size);
 
-            :is(body):not([phantom="true"]):not(:has(& .details.captions > .list-item[value="0"])) & .controls .captions {
-                display: none !important;
-            }
-
             &[timelines="false"] .timelines {
                 display: none;
             }

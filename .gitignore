@@ -1,10 +1,5 @@
 electron-data
 yt-extractor
-phantom/*.wav
-phantom/whisper.cpp
-phantom/phantom
-phantom/phantom.exe
-phantom/models
 dbs/*.json
 js/__.js
 window_config.json

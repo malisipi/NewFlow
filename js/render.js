@@ -336,8 +336,7 @@ var render = {
             components.tabs.watch.video.video_player.controls.details.$$.captions,
             [
                 {text:i18n.text("disable"), value:-1},
-                ...response.captions.map( (track,index) => ({text:track?.name?.simpleText ?? track?.name?.runs?.[0]?.text, value:index})),
-                {text:i18n.text("phantom_captions"), value:"phantom"}
+                ...response.captions.map( (track,index) => ({text:track?.name?.simpleText ?? track?.name?.runs?.[0]?.text, value:index}))
             ],
             i18n.text("captions")
         );
