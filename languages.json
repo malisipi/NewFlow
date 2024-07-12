@@ -67,6 +67,10 @@
         "en": "Audio Quality",
         "tr": "Ses Kalitesi"
     },
+    "audio_pitch": {
+        "en": "Audio Patch",
+        "tr": "Ses Perdesi"
+    },
     "captions": {
         "en": "Captions",
         "tr": "Alt Yazılar"

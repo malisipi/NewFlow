@@ -150,6 +150,9 @@ var components = {
                                 audio_quality: (index) => {
                                     components.tabs.watch.video.$_change_stream("audio", index);
                                 },
+                                audio_pitch: (value) => {
+                                    components.tabs.watch.video.$_pitch(Number(value));
+                                },
                                 captions: (id) => {
                                     if (id == -1) {
                                         components.tabs.watch.video.$captions.$_remove();
@@ -225,16 +228,64 @@ var components = {
                 $video: null,
                 $audio: null,
                 $hls: null,
+                $video_audio_ctx: null,
+                $audio_audio_ctx: null,
+                $video_source: null,
+                $audio_source: null,
                 $video_gain_node: null,
                 $audio_gain_node: null,
+                $__pitch: 1,
+                $__pitch_audio_process: (process_event) => {
+                    let input_buffer = process_event.inputBuffer;
+                    let output_buffer = process_event.outputBuffer;
+
+                    for (let channel = 0; channel < input_buffer.numberOfChannels; channel++) {
+                        let input_data = input_buffer.getChannelData(channel);
+                        let output_data = output_buffer.getChannelData(channel);
+
+                        for (let i = 0; i < output_buffer.length; i++) {
+                            const j = i * components.tabs.watch.video.$__pitch;
+                            const jf = Math.floor(j);
+                            const delta = j - jf;
+                            if (jf+1 < input_data.length) {
+                                output_data[i] = (1 - delta) * input_data[jf] + delta * input_data[jf+1];
+                            } else {
+                                output_data[i] = 0;
+                            }
+                        }
+                    }
+                },
+                $_pitch: (value) => {
+                    if(value == components.tabs.watch.video.$__pitch) return;
+                    if(value == 1){
+                        components.tabs.watch.video.$__pitch = 1;
+                        ["video", "audio"].forEach(which => {
+                            components.tabs.watch.video[`$${which}_source`].disconnect();
+                            components.tabs.watch.video[`$${which}_source`].connect(components.tabs.watch.video[`$${which}_gain_node`]);
+                        });
+                    } else {
+                        components.tabs.watch.video.$__pitch = value;
+                        ["video", "audio"].forEach(which => {
+                            components.tabs.watch.video[`$${which}_source`].disconnect();
+                            components.tabs.watch.video[`$${which}_source`].connect(components.tabs.watch.video[`$${which}_pitch_filter`]);
+                        });
+                    }
+                },
+                $video_pitch_filter: null,
+                $audio_pitch_filter: null,
                 $_init_audio_ctx: () => {
                     ["video", "audio"].forEach(which => {
-                        let audio_ctx = new AudioContext();
-                        let source = audio_ctx.createMediaElementSource(components.tabs.watch.video[`$${which}`]);
-                        components.tabs.watch.video[`$${which}_gain_node`] = audio_ctx.createGain();
+                        components.tabs.watch.video[`$${which}_audio_ctx`] = new AudioContext();
+                        components.tabs.watch.video[`$${which}_source`] = components.tabs.watch.video[`$${which}_audio_ctx`].createMediaElementSource(components.tabs.watch.video[`$${which}`]);
+                        components.tabs.watch.video[`$${which}_gain_node`] = components.tabs.watch.video[`$${which}_audio_ctx`].createGain();
                         components.tabs.watch.video[`$${which}_gain_node`].gain.value = 1;
-                        source.connect(components.tabs.watch.video[`$${which}_gain_node`]);
-                        components.tabs.watch.video[`$${which}_gain_node`].connect(audio_ctx.destination);
+
+                        components.tabs.watch.video[`$${which}_pitch_filter`] = components.tabs.watch.video[`$${which}_audio_ctx`].createScriptProcessor(1024, 1, 1);
+                        components.tabs.watch.video[`$${which}_pitch_filter`].onaudioprocess = components.tabs.watch.video.$__pitch_audio_process;
+
+                        components.tabs.watch.video[`$${which}_source`].connect(components.tabs.watch.video[`$${which}_gain_node`]);
+                        components.tabs.watch.video[`$${which}_pitch_filter`].connect(components.tabs.watch.video[`$${which}_gain_node`]); // The node will not affect audio until source connected to it.
+                        components.tabs.watch.video[`$${which}_gain_node`].connect(components.tabs.watch.video[`$${which}_audio_ctx`].destination);
                     });
                 },
                 $_volume: (value) => {
@@ -730,8 +781,9 @@ components.tabs.watch.video.video_player.controls.details.$$.captions = componen
 components.tabs.watch.video.video_player.controls.details.$$.more = components.tabs.watch.video.video_player.$.querySelector(".details.more");
 components.tabs.watch.video.video_player.controls.details.$$.filter = components.tabs.watch.video.video_player.$.querySelector(".details.filter");
 components.tabs.watch.video.video_player.controls.details.$$.timelines = components.tabs.watch.video.video_player.$.querySelector(".details.timelines");
-components.tabs.watch.video.video_player.controls.details.$$.audio_quality = components.tabs.watch.video.video_player.$.querySelector(".details.audio-quality");
 components.tabs.watch.video.video_player.controls.details.$$.video_quality = components.tabs.watch.video.video_player.$.querySelector(".details.video-quality");
+components.tabs.watch.video.video_player.controls.details.$$.audio_quality = components.tabs.watch.video.video_player.$.querySelector(".details.audio-quality");
+components.tabs.watch.video.video_player.controls.details.$$.audio_pitch = components.tabs.watch.video.video_player.$.querySelector(".details.audio-pitch");
 components.tabs.watch.comments = components.tabs.watch.$.querySelector(".comments");
 components.tabs.watch.next_videos = components.tabs.watch.$.querySelector(".next-videos");
 components.tabs.watch.panels.$ = components.tabs.watch.$.querySelector(".panels");
