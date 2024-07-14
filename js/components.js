@@ -280,7 +280,11 @@ var components = {
                         components.tabs.watch.video[`$${which}_gain_node`] = components.tabs.watch.video[`$${which}_audio_ctx`].createGain();
                         components.tabs.watch.video[`$${which}_gain_node`].gain.value = 1;
 
+                        // TODO: @@@watch.mediaSession.pitch_buffer_size<int>(1||0|1|2|3) 0:256 / 1:1024 / 2:4096 / 3:16384
                         components.tabs.watch.video[`$${which}_pitch_filter`] = components.tabs.watch.video[`$${which}_audio_ctx`].createScriptProcessor(1024, 1, 1);
+                        // [Deprecation] The ScriptProcessorNode is deprecated. Use AudioWorkletNode instead.
+                        // I will switch to AudioWorkletNode if I able to change quantum size of AudioWorkletNode
+                        // Default quantum size (mostly 128) is too low to apply pitch without harming audio
                         components.tabs.watch.video[`$${which}_pitch_filter`].onaudioprocess = components.tabs.watch.video.$__pitch_audio_process;
 
                         components.tabs.watch.video[`$${which}_source`].connect(components.tabs.watch.video[`$${which}_gain_node`]);
@@ -324,6 +328,9 @@ var components = {
                     } else {
                         components.tabs.watch.video.$_play();
                     }
+                },
+                $speed: () => {
+                    return components.tabs.watch.video.$video.playbackRate;
                 },
                 $_speed: async (value) => {
                     components.tabs.watch.video.$video.playbackRate =
@@ -405,7 +412,8 @@ var components = {
                 $_get_state: () => {
                     return ({
                         is_playing: components.tabs.watch.video.$is_playing(),
-                        current_time: components.tabs.watch.video.$current_time()
+                        current_time: components.tabs.watch.video.$current_time(),
+                        speed: components.tabs.watch.video.$speed()
                     });
                 },
                 $_apply_state: async (state) => {
@@ -414,6 +422,7 @@ var components = {
                     } else {
                         await components.tabs.watch.video.$_pause();
                     };
+                    await components.tabs.watch.video.$_speed(state.speed);
                     components.tabs.watch.video.$_seekto(state.current_time);
                 },
                 $_change_stream: async (type, id) => {
