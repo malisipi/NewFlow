@@ -42,6 +42,10 @@ var render = {
         owner_preview: (mode="normal", owner_info) => { /* mode=normal|compact */
             let owner = document.createElement("div");
             owner.className = mode + " -owner-preview";
+            owner.addEventListener("click", (event, _id=owner_info.id) => {
+                if(event.target.className == "follow") return;
+                render.owner(_id);
+            });
             let thumbnail = document.createElement("img");
             thumbnail.draggable = false;
             thumbnail.loading = "lazy";
@@ -408,6 +412,29 @@ var render = {
         // Update playing queue
         render.$.queue(components.tabs.watch.panels.playing_queue);
         render.$.queue(components.tabs.queue.$);
+    },
+    owner: async (id) => {
+        let data = await yt_extractor.owner.get_owner(id);
+        components.tabs.$_switch("owner");
+        components.tabs.owner.banner.background.src = data.backgrounds?.[0]?.url;
+        components.tabs.owner.banner.description.innerText = data.description;
+        components.tabs.owner.banner.followers.innerText = data.followers + " Followers";
+        components.tabs.owner.banner.name.innerText = data.name;
+        components.tabs.owner.banner.video_count = data.videosCount + " Videos";
+        components.tabs.owner.banner.thumbnail.src = data.thumbnails?.[0]?.url;
+
+        components.tabs.owner.videos.innerHTML = "";
+
+        data.videos.forEach(video_preview => {
+            components.tabs.owner.videos.append(render.$.video_preview("compact", {
+                id: video_preview.id,
+                title: video_preview.title,
+                thumbnail: video_preview.thumbnail.url,
+                owner: {
+                    name: data.name
+                }
+            }));
+        });
     },
     search: async (query) => {
         components.tabs.$_switch("search");

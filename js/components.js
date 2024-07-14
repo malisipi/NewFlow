@@ -585,6 +585,19 @@ var components = {
         search: {
             $: null
         },
+        owner: {
+            $: null,
+            banner: {
+                $: null,
+                background: null,
+                thumbnail: null,
+                name: null,
+                description: null,
+                followers: null,
+                video_count: null
+            },
+            videos: null
+        },
         history: {
             $: null
         },
@@ -815,6 +828,15 @@ components.tabs.watch.info.controls.pip = components.tabs.watch.info.controls.$.
 components.tabs.watch.info.controls.download = components.tabs.watch.info.controls.$.querySelector(".download");
 components.tabs.watch.info.controls.share = components.tabs.watch.info.controls.$.querySelector(".share");
 components.tabs.trends.$ = components.tabs.$.querySelector("#trends");
+components.tabs.owner.$ = components.tabs.$.querySelector("#owner");
+components.tabs.owner.banner.$ = components.tabs.owner.$.querySelector(".banner");
+components.tabs.owner.banner.background = components.tabs.owner.banner.$.querySelector(".background");
+components.tabs.owner.banner.description = components.tabs.owner.banner.$.querySelector(".description");
+components.tabs.owner.banner.followers = components.tabs.owner.banner.$.querySelector(".followers");
+components.tabs.owner.banner.name = components.tabs.owner.banner.$.querySelector(".name");
+components.tabs.owner.banner.thumbnail = components.tabs.owner.banner.$.querySelector(".thumbnail");
+components.tabs.owner.banner.video_count = components.tabs.owner.banner.$.querySelector(".video_count");
+components.tabs.owner.videos = components.tabs.owner.$.querySelector(".videos");
 components.tabs.search.$ = components.tabs.$.querySelector("#search");
 components.tabs.history.$ = components.tabs.$.querySelector("#history");
 components.tabs.following.$ = components.tabs.$.querySelector("#following");
@@ -962,6 +984,11 @@ components.tabs.watch.video.video_player.controls.details.$$.filter.querySelecto
         element.value = element.getAttribute("default-value");
     });
     components.tabs.watch.video.$video.setAttribute("style", "");
+});
+
+components.tabs.watch.info.owner.$.addEventListener("click", (event) => {
+    if(event.target.className == "follow") return;
+    render.owner(components.tabs.watch.$$response.owner.id);
 });
 
 components.tabs.watch.info.owner.follow.addEventListener("click", async () => {

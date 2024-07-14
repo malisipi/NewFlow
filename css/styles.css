@@ -753,7 +753,7 @@ dialog#share[open] {
     }
 }
 
-#trends, #channel .videos {
+#trends, #owner .videos {
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
@@ -1000,7 +1000,7 @@ video::cue {
     }
 }
 
-#channel {
+#owner {
     .banner {
         .background {
             width: 100%;
