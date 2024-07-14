@@ -753,7 +753,7 @@ dialog#share[open] {
     }
 }
 
-#trends {
+#trends, #channel .videos {
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
@@ -997,6 +997,35 @@ video::cue {
         justify-content: center;
         align-items: center;
         align-self: center;
+    }
+}
+
+#channel {
+    .banner {
+        .background {
+            width: 100%;
+            border-radius: var(--border-radius-size);
+        }
+        
+        .overlay {
+            position: relative;
+            width: 90%;
+            left: 5%;
+            top: calc(clamp(20px, 5vw, 150px) * -1);
+            display: flex;
+            gap: clamp(5px, 1vw, 20px);
+            align-items: center;
+            background: var(--seconder-background-color);
+            padding: 5px;
+            border-radius: var(--border-radius-size);
+
+            .thumbnail {
+                --size: clamp(64px, 15%, 250px);
+                width: var(--size);
+                height: var(--size);
+                border-radius: var(--border-radius-size);
+            }
+        }
     }
 }
 
