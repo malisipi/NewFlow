@@ -1025,6 +1025,27 @@ video::cue {
                 height: var(--size);
                 border-radius: var(--border-radius-size);
             }
+
+            .info {
+                .name {
+                    font-size: clamp(20px,2.5vw,48px);
+                    font-weight: bold;
+                }
+                .inline-info {
+                    display: flex;
+                    flex-direction: row;
+                    gap: 5px;
+
+                    & > *:not(:last-child)::after{
+                        content: " • ";
+                    }
+                }
+                .follow {
+                    position: absolute;
+                    top: 12px;
+                    right: 12px;
+                }
+            }
         }
     }
 }

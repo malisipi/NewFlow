@@ -161,7 +161,7 @@ var render = {
         }
     },
     trends: async () => {
-        components.tabs.trends.$.innerHTML = "";
+        components.tabs.trends.$.innerHTML = ""; 
 
         let trends = await yt_extractor.trends.get_trends();
         trends.videos.forEach(video_preview => {
@@ -420,7 +420,7 @@ var render = {
         components.tabs.owner.banner.description.innerText = data.description;
         components.tabs.owner.banner.followers.innerText = data.followers + " Followers";
         components.tabs.owner.banner.name.innerText = data.name;
-        components.tabs.owner.banner.video_count = data.videosCount + " Videos";
+        components.tabs.owner.banner.video_count.innerText = data.videosCount + " Videos";
         components.tabs.owner.banner.thumbnail.src = data.thumbnails?.[0]?.url;
 
         components.tabs.owner.videos.innerHTML = "";
