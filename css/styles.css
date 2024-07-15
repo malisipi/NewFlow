@@ -1036,8 +1036,11 @@ video::cue {
                     gap: 5px;
 
                     & > *:not(:last-child)::after{
-                        content: " • ";
+                        content: " \002022 ";
                     }
+                }
+                .description {
+                    user-select: text;
                 }
                 .follow {
                     position: absolute;
