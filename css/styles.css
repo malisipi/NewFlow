@@ -820,7 +820,6 @@ dialog#share[open] {
 [verified="true"]::after {
     content: "verified";
     font-family: "Material Symbols Rounded";
-    font-size: 16px;
     color: var(--text-color);
     transform: translate(4px, 3px);
     display: inline-block;

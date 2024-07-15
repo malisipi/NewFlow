@@ -423,6 +423,7 @@ var render = {
         components.tabs.owner.banner.name.innerText = data.name;
         components.tabs.owner.banner.video_count.innerText = data.videosCount + " Videos";
         components.tabs.owner.banner.thumbnail.src = data.thumbnails?.[0]?.url;
+        components.tabs.owner.banner.name.setAttribute("verified", data.verified);
 
         components.tabs.owner.videos.innerHTML = "";
 
