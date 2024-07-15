@@ -1044,6 +1044,15 @@ video::cue {
                     position: absolute;
                     top: 12px;
                     right: 12px;
+                    border-radius: var(--border-radius-size);
+                    border: none;
+                    background: var(--other-color);
+                    display: flex;
+                    height: 32px;
+                    width: 32px;
+                    justify-content: center;
+                    align-items: center;
+                    align-self: center;
                 }
             }
         }

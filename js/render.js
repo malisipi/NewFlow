@@ -415,6 +415,7 @@ var render = {
     },
     owner: async (id) => {
         let data = await yt_extractor.owner.get_owner(id);
+        components.tabs.owner.$$response = data;
         components.tabs.$_switch("owner");
         components.tabs.owner.banner.background.src = data.backgrounds?.[0]?.url;
         components.tabs.owner.banner.description.innerText = data.description;
@@ -435,6 +436,14 @@ var render = {
                 }
             }));
         });
+
+        (async () => {
+            if(database.following.is_following(data.id)){
+                components.tabs.owner.banner.follow.innerText = "notifications_active";
+            } else {
+                components.tabs.owner.banner.follow.innerText = "notifications";
+            }
+        })();
     },
     search: async (query) => {
         components.tabs.$_switch("search");

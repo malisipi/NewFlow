@@ -587,6 +587,7 @@ var components = {
         },
         owner: {
             $: null,
+            $$response: null,
             banner: {
                 $: null,
                 background: null,
@@ -594,7 +595,8 @@ var components = {
                 name: null,
                 description: null,
                 followers: null,
-                video_count: null
+                video_count: null,
+                follow: null,
             },
             videos: null
         },
@@ -836,6 +838,7 @@ components.tabs.owner.banner.followers = components.tabs.owner.banner.$.querySel
 components.tabs.owner.banner.name = components.tabs.owner.banner.$.querySelector(".name");
 components.tabs.owner.banner.thumbnail = components.tabs.owner.banner.$.querySelector(".thumbnail");
 components.tabs.owner.banner.video_count = components.tabs.owner.banner.$.querySelector(".video_count");
+components.tabs.owner.banner.follow = components.tabs.owner.banner.$.querySelector(".follow");
 components.tabs.owner.videos = components.tabs.owner.$.querySelector(".videos");
 components.tabs.search.$ = components.tabs.$.querySelector("#search");
 components.tabs.history.$ = components.tabs.$.querySelector("#history");
@@ -1032,6 +1035,22 @@ components.tabs.watch.info.controls.download.addEventListener("click", async () 
 });
 components.tabs.watch.info.controls.share.addEventListener("click", () => {
     components.tabs.watch.video.$_share();
+});
+
+components.tabs.owner.banner.follow.addEventListener("click", async () => {
+    if(!database.following.is_following(components.tabs.owner.$$response.id)){ // If not following yet
+        components.tabs.owner.banner.follow.innerText = "notifications_active";
+        database.following.add({
+            id: components.tabs.owner.$$response.id,
+            name: components.tabs.owner.$$response.name,
+            followers: components.tabs.owner.$$response.followers,
+            verified: components.tabs.owner.$$response.verified,
+            thumbnail: await image_helper.data_uri.from_image_uri(components.tabs.owner.$$response.thumbnails[0].url),
+        });
+    } else {
+        components.tabs.owner.banner.follow.innerText = "notifications";
+        database.following.remove(components.tabs.owner.$$response.id);
+    }
 });
 
 document.addEventListener("fullscreenchange", () => {
