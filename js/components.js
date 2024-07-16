@@ -100,6 +100,9 @@ var components = {
         $_switch: (tab) => {
             components.tabs.$.setAttribute("active", tab);
         },
+        $active: () => {
+            return components.tabs.$.getAttribute("active") ?? null;
+        },
         watch: {
             $: null,
             $$response: null,
@@ -225,6 +228,13 @@ var components = {
                     });
                     return true;
                 },
+                $_theatre: () => {
+                    if(components.tabs.watch.$.getAttribute("mode") == "theatre") {
+                        components.tabs.watch.$.removeAttribute("mode");
+                    } else {
+                        components.tabs.watch.$.setAttribute("mode", "theatre");
+                    }
+                },
                 $video: null,
                 $audio: null,
                 $hls: null,
@@ -293,6 +303,7 @@ var components = {
                     });
                 },
                 $_volume: (value) => {
+                    components.tabs.watch.video.video_player.controls.volume_slider.value =
                     components.tabs.watch.video.$audio_gain_node.gain.value =
                     components.tabs.watch.video.$video_gain_node.gain.value = value;
                 },
@@ -951,11 +962,7 @@ components.tabs.watch.video.video_player.controls.captions.addEventListener("cli
     components.tabs.watch.video.video_player.controls.details.toggle("captions");
 });
 components.tabs.watch.video.video_player.controls.theatre.addEventListener("click", () => {
-    if(components.tabs.watch.$.getAttribute("mode") == "theatre") {
-        components.tabs.watch.$.removeAttribute("mode");
-    } else {
-        components.tabs.watch.$.setAttribute("mode", "theatre");
-    }
+    components.tabs.watch.video.$_theatre();
 });
 components.tabs.watch.video.video_player.controls.timelines.addEventListener("click", () => {
     components.tabs.watch.video.video_player.controls.details.toggle("timelines");
@@ -1085,10 +1092,7 @@ if(components.$.$_debug) {
 //context_menu.init();
 
 // Render trends
-
-if(!components.$.$_debug) {
-    render.trends();
-}
+render.trends();
 
 // Load theme and materials
 // TODO: Move these code to settings

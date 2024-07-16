@@ -20,6 +20,7 @@
     <script @src="./js/thirdparty/vibrant.js" full-defer></script>
     <script @src="./js/thirdparty/hls.light.min.js" full-defer></script>
     <script @src="./js/plugins.js" full-defer></script>
+    <script @src="./js/keyboard_shortcuts.js" full-defer></script>
     <script>
       document.addEventListener('readystatechange', event => {
           if (event.target.readyState === "complete") {
@@ -99,7 +100,7 @@
   </div>
   <button class="material-symbol global-action search">search</button>
   <div class="tabs" active="trends">
-    <div id="trends" class="view"><language-pack key="disabled_while_debug_mode"></language-pack></div>
+    <div id="trends" class="view"></div>
     <div id="search" class="view"></div>
     <div id="watch" class="view">
       <div class="primary-flow">
