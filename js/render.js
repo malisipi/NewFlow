@@ -431,7 +431,8 @@ var render = {
             components.tabs.owner.videos.append(render.$.video_preview("compact", {
                 id: video_preview.id,
                 title: video_preview.title,
-                thumbnail: video_preview.thumbnail.url,
+                thumbnail: video_preview.thumbnails?.[0]?.url ?? null,
+                length: video_preview.length,
                 owner: {
                     name: data.name
                 }
