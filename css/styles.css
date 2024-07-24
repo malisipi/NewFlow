@@ -647,6 +647,13 @@ body:has(div.tabs[active="bookmarks"]) .sidenav:not([open]) div[tab="bookmarks"]
                 }
             }
         }
+
+        & .comments {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            padding: 16px 0;
+        }
     }
 
     & .seconder-flow {
@@ -939,6 +946,25 @@ video::cue {
         & .length {
             display: none;
         }
+    }
+}
+
+.-comment-preview {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+
+    & img {
+        border-radius: var(--border-radius-size);
+        height: 44px;
+    }
+
+    & .name {
+        font-weight: 700;
+    }
+
+    & .text {
+        user-select: text;
     }
 }
 

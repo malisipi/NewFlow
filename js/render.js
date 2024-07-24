@@ -158,6 +158,26 @@ var render = {
                     }
                 }
             ]);
+        },
+        comment_preview: (info) => {
+            let outer = document.createElement("div");
+            outer.className = "-comment-preview";
+            let thumbnail = document.createElement("img");
+            thumbnail.draggable = false;
+            thumbnail.src = info.owner.thumbnails?.[0]?.url;
+            outer.append(thumbnail);
+            let details = document.createElement("div");
+            outer.append(details);
+            let name = document.createElement("div");
+            name.className = "name";
+            name.innerText = info.owner.name;
+            name.setAttribute("verified", info.owner.isVerified);
+            details.append(name);
+            let text = document.createElement("div");
+            text.className = "text";
+            text.innerText = info.text;
+            details.append(text);
+            return outer;
         }
     },
     trends: async () => {
@@ -412,6 +432,10 @@ var render = {
         // Update playing queue
         render.$.queue(components.tabs.watch.panels.playing_queue);
         render.$.queue(components.tabs.queue.$);
+
+        components.tabs.watch.comments.innerHTML = "";
+        let comments = await yt_extractor.video.get_comments(response.commentsToken);
+        comments.comments.forEach(data=>components.tabs.watch.comments.append(render.$.comment_preview(data)));
     },
     owner: async (id) => {
         let data = await yt_extractor.owner.get_owner(id);
