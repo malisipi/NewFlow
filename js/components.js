@@ -48,7 +48,7 @@ var components = {
             },
             feed: async () => {
                 render.feed();
-                if((new Date() - (new Date(database.feed.content.fetch_time)))/1000/60/60/24 > 0.25){ // if cache older than 1/4 day (6 hours), fetch again
+                if(database.feed.content.fetch_time == undefined || (new Date() - (new Date(database.feed.content.fetch_time)))/1000/60/60/24 > 0.25){ // if not cached || if cache older than 1/4 day (6 hours), fetch again
                     await database.feed.fetch();
                     render.feed();
                 };
