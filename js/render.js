@@ -160,11 +160,15 @@ var render = {
             ]);
         },
         comment_preview: (info) => {
+            let __channel_opener = (event, channel_id=info.owner.id) => {
+                render.owner(channel_id);
+            };
             let outer = document.createElement("div");
             outer.className = "-comment-preview";
             let thumbnail = document.createElement("img");
             thumbnail.draggable = false;
             thumbnail.src = info.owner.thumbnails?.[0]?.url;
+            thumbnail.addEventListener("click", __channel_opener);
             outer.append(thumbnail);
             let details = document.createElement("div");
             outer.append(details);
@@ -172,6 +176,7 @@ var render = {
             name.className = "name";
             name.innerText = info.owner.name;
             name.setAttribute("verified", info.owner.isVerified);
+            name.addEventListener("click", __channel_opener);
             details.append(name);
             let text = document.createElement("div");
             text.className = "text";
