@@ -446,7 +446,12 @@ var render = {
         let data = await yt_extractor.owner.get_owner(id);
         components.tabs.owner.$$response = data;
         components.tabs.$_switch("owner");
-        components.tabs.owner.banner.background.src = data.backgrounds?.[0]?.url;
+        if(data.backgrounds?.[0]?.url != null){
+            components.tabs.owner.banner.background.setAttribute("banner", true);
+            components.tabs.owner.banner.background.src = data.backgrounds?.[0]?.url;
+        } else {
+            components.tabs.owner.banner.background.setAttribute("banner", false);
+        }
         components.tabs.owner.banner.description.innerText = data.description;
         components.tabs.owner.banner.followers.innerText = data.followers + " Followers";
         components.tabs.owner.banner.name.innerText = data.name;
@@ -456,17 +461,19 @@ var render = {
 
         components.tabs.owner.videos.innerHTML = "";
 
-        data.videos.forEach(video_preview => {
-            components.tabs.owner.videos.append(render.$.video_preview("compact", {
-                id: video_preview.id,
-                title: video_preview.title,
-                thumbnail: video_preview.thumbnails?.[0]?.url ?? null,
-                length: video_preview.length,
-                owner: {
-                    name: data.name
-                }
-            }));
-        });
+        if(data.videos != null) {
+            data.videos.forEach(video_preview => {
+                components.tabs.owner.videos.append(render.$.video_preview("compact", {
+                    id: video_preview.id,
+                    title: video_preview.title,
+                    thumbnail: video_preview.thumbnails?.[0]?.url ?? null,
+                    length: video_preview.length,
+                    owner: {
+                        name: data.name
+                    }
+                }));
+            });
+        };
 
         (async () => {
             if(database.following.is_following(data.id)){

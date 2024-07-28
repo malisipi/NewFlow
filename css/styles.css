@@ -1030,6 +1030,14 @@ video::cue {
         .background {
             width: 100%;
             border-radius: var(--border-radius-size);
+
+            &[banner="false"] {
+                display: none;
+            }
+        }
+
+        &:has(.background[banner="false"]) .overlay {
+            top: 0px;
         }
         
         .overlay {
