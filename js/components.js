@@ -110,6 +110,10 @@ var components = {
                 video_player: {
                     $: null,
                     thumbnail: null,
+                    stream_date: {
+                        $: null,
+                        date: null
+                    },
                     controls: {
                         $:null,
                         time_slider: null,
@@ -793,6 +797,8 @@ components.tabs.watch.video.$video = components.tabs.watch.$.querySelector("vide
 components.tabs.watch.video.$audio = components.tabs.watch.$.querySelector("audio");
 components.tabs.watch.video.video_player.$ = components.tabs.watch.$.querySelector(".video-player");
 components.tabs.watch.video.video_player.thumbnail = components.tabs.watch.video.video_player.$.querySelector("img.thumbnail");
+components.tabs.watch.video.video_player.stream_date.$ = components.tabs.watch.video.video_player.$.querySelector(".stream-start-date");
+components.tabs.watch.video.video_player.stream_date.date = components.tabs.watch.video.video_player.stream_date.$.querySelector(".date");
 components.tabs.watch.video.video_player.controls.$ = components.tabs.watch.video.video_player.$.querySelector(".controls");
 components.tabs.watch.video.video_player.controls.previous = components.tabs.watch.video.video_player.controls.$.querySelector(".previous");
 components.tabs.watch.video.video_player.controls.backward = components.tabs.watch.video.video_player.controls.$.querySelector(".backward");

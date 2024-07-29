@@ -235,7 +235,7 @@ div.playbar {
     grid-auto-columns: min-content auto min-content;
     align-items: center;
     gap: 0 10px;
-    z-index: 999;
+    z-index: 7;
 
     & .thumbnail {
         grid-area: thumbnail;

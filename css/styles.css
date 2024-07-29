@@ -219,8 +219,13 @@ input[type="range"]::-webkit-slider-thumb {
         }
     }
 
-    &[open] .bottom-border {
-        border-bottom: var(--border-color) var(--border-thick) solid;
+    &[open] {
+        border-right: var(--border-color) var(--border-thick) solid;
+        border-radius: var(--border-radius-size);
+
+        & .bottom-border {
+            border-bottom: var(--border-color) var(--border-thick) solid;
+        }
     }
 }
 
@@ -300,6 +305,7 @@ body:has(div.tabs[active="bookmarks"]) .sidenav:not([open]) div[tab="bookmarks"]
             grid-template-areas:
                 "video empty1"
                 "video details"
+                "stream-info details"
                 "time time"
                 "controls controls";
             border-radius: var(--border-radius-size);
@@ -462,7 +468,7 @@ body:has(div.tabs[active="bookmarks"]) .sidenav:not([open]) div[tab="bookmarks"]
             }
 
             /* Hide controls auto; Will replace the CSS*/
-            & > *:not(video, .thumbnail) {
+            & > *:not(video, .thumbnail, .stream-start-date) {
                 opacity: 0;
                 pointer-events: none;
                 transition-duration: 200ms;
@@ -530,6 +536,21 @@ body:has(div.tabs[active="bookmarks"]) .sidenav:not([open]) div[tab="bookmarks"]
                         accent-color: var(--effect-color);
                         width: 80px;
                     }
+                }
+            }
+
+            & .stream-start-date {
+                display: none;
+                
+                &[show="true"]{
+                    grid-area: stream-info;
+                    padding: 16px;
+                    margin-bottom: 4px;
+                    background: var(--theme-seconder-color);
+                    width: min-content;
+                    text-wrap: nowrap;
+                    border-radius: 0 var(--border-radius-size) var(--border-radius-size) 0;
+                    display: unset;
                 }
             }
         }
@@ -1151,4 +1172,10 @@ input.switch {
     to {
         transform: translate(-50%, -50%) rotateZ(360deg);
     }
+}
+
+button.global-action {
+    border-radius: var(--border-radius-size);
+    border: none;
+    background: var(--seconder-color);
 }

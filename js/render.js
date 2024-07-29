@@ -232,20 +232,29 @@ var render = {
         components.tabs.watch.video.$video_tracks = [];
         components.tabs.watch.video.$audio_tracks = [];
         components.tabs.watch.video.$related_tracks = [];
-        if(!components.tabs.watch.$$response.isLiveNow){
-            ([
-                [response.videoStreams, components.tabs.watch.video.$video_tracks],
-                [response.audioStreams, components.tabs.watch.video.$audio_tracks],
-                [response.relatedStreams, components.tabs.watch.video.$related_tracks]
-            ]).map(target => {
-                target[0].map(stream => {
-                    if(stream.url == null) {
-                        stream.url = yt_extractor.video.solve_signature_cipher_url(stream.signatureCipher);
-                    }
-                    stream.url = yt_extractor.video.solve_n_param(stream.url);
-                    target[1].push(stream);
+        if(!components.tabs.watch.$$response.playability.isLiveNow){
+            if(components.tabs.watch.$$response.playability.isLive && components.tabs.watch.$$response.playability.streamTime) {
+                components.tabs.watch.video.video_player.stream_date.$.setAttribute("show", true);
+                components.tabs.watch.video.video_player.stream_date.date.innerText = components.tabs.watch.$$response.playability.streamTime.toLocaleString();
+            } else {
+                components.tabs.watch.video.video_player.stream_date.$.setAttribute("show", false);
+                ([
+                    [response.videoStreams, components.tabs.watch.video.$video_tracks],
+                    [response.audioStreams, components.tabs.watch.video.$audio_tracks],
+                    [response.relatedStreams, components.tabs.watch.video.$related_tracks]
+                ]).map(target => {
+                    target[0].map(stream => {
+                        if(stream.url == null) {
+                            stream.url = yt_extractor.video.solve_signature_cipher_url(stream.signatureCipher);
+                        }
+                        stream.url = yt_extractor.video.solve_n_param(stream.url);
+                        target[1].push(stream);
+                    });
                 });
-            });
+
+                components.tabs.watch.video.$_change_stream("video", -1);
+                components.tabs.watch.video.$_change_stream("audio", -1);
+            };
         } else {
             // Since Newflow pip is not compatible with live streams
             // Close Newflow pip until live stream ends.
@@ -264,11 +273,6 @@ var render = {
                 );
                 video.play();
             });
-        }
-        
-        if(!components.tabs.watch.$$response.isLiveNow){
-            components.tabs.watch.video.$_change_stream("video", -1);
-            components.tabs.watch.video.$_change_stream("audio", -1);
         }
 
         components.playbar.controls.play_pause.innerText = "play_arrow";
@@ -440,7 +444,7 @@ var render = {
 
         components.tabs.watch.comments.innerHTML = "";
         let comments = await yt_extractor.video.get_comments(response.commentsToken);
-        comments.comments.forEach(data=>components.tabs.watch.comments.append(render.$.comment_preview(data)));
+        comments?.comments?.forEach(data=>components.tabs.watch.comments.append(render.$.comment_preview(data)));
     },
     owner: async (id) => {
         let data = await yt_extractor.owner.get_owner(id);
