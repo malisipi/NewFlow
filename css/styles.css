@@ -301,7 +301,7 @@ body:has(div.tabs[active="bookmarks"]) .sidenav:not([open]) div[tab="bookmarks"]
             max-height: calc(100vh - calc(var(--titlebar-height) + 120px));
             display: grid;
             grid-template-columns: 1fr minmax(min-content, 200px);
-            grid-template-rows: minmax(0, 1fr) minmax(0, 200px) auto auto;
+            grid-template-rows: minmax(0, 1fr) 0 minmax(0, 200px) auto auto;
             grid-template-areas:
                 "video empty1"
                 "video details"
@@ -548,9 +548,11 @@ body:has(div.tabs[active="bookmarks"]) .sidenav:not([open]) div[tab="bookmarks"]
                     margin-bottom: 4px;
                     background: var(--theme-seconder-color);
                     width: min-content;
+                    height: min-content;
                     text-wrap: nowrap;
                     border-radius: 0 var(--border-radius-size) var(--border-radius-size) 0;
                     display: unset;
+                    align-self: flex-end;
                 }
             }
         }
