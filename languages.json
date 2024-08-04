@@ -11,9 +11,9 @@
         "en": "Following",
         "tr": "Takip Edilenler"
     },
-    "bookmarks": {
-        "en": "Bookmarks",
-        "tr": "Yer İşaretleri"
+    "playlists": {
+        "en": "Playlists",
+        "tr": "Oynatma Listeleri"
     },
     "history": {
         "en": "History",

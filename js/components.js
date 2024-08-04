@@ -56,6 +56,9 @@ var components = {
             downloads: () => {
                 components.tabs.downloads.$_sync();
                 render.downloads();
+            },
+            playlists: () => {
+                render.playlists();
             }
         }
     },
@@ -664,6 +667,9 @@ var components = {
             $_clear_sync: () => {
                 clearInterval(components.tabs.downloads.$sync);
             }
+        },
+        playlists: {
+            $: null
         }
     }
 };
@@ -864,6 +870,7 @@ components.tabs.feed.$ = components.tabs.$.querySelector("#feed");
 components.tabs.downloads.$ = components.tabs.$.querySelector("#downloads");
 components.tabs.offline.$ = components.tabs.$.querySelector("#offline");
 components.tabs.queue.$ = components.tabs.$.querySelector("#queue");
+components.tabs.playlists.$ = components.tabs.$.querySelector("#playlists");
 
 // Add event listeners
 

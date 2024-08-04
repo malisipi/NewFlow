@@ -865,7 +865,7 @@ video::cue {
     background: color-mix(in srgb, var(--effect-color) 75%, transparent);
 }
 
-.-video-preview {
+.-video-preview, .-playlist-preview {
     display: grid;
     padding: 5px;
     border-radius: var(--border-radius-size);

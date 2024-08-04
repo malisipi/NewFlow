@@ -5,12 +5,12 @@ var database = {
         defaultStructure: {
             $liked_videos: {
                 title: "Liked Videos",
-                thumbnail: "./assets/playlist_liked.png",
+                thumbnail: "./assets/inner/playlist_liked.png",
                 list: []
             },
             $watch_later: {
                 title: "Watch Later",
-                thumbnail: "./assets/playlist_watch_later.png",
+                thumbnail: "./assets/inner/playlist_watch_later.png",
                 list: []
             }
         },

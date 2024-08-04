@@ -39,6 +39,28 @@ var render = {
             })
             return video;
         },
+        playlist_preview: (mode="normal", playlist_info) => { /* mode=normal|compact */
+            /* playlist_info
+             *  title
+             *  thumbnail
+             *  id
+             */
+            let playlist = document.createElement("div");
+            playlist.className = mode + " -playlist-preview";
+            let thumbnail = document.createElement("img");
+            thumbnail.draggable = false;
+            thumbnail.loading = "lazy";
+            thumbnail.src = playlist_info?.thumbnail ?? "";
+            playlist.append(thumbnail);
+            let title = document.createElement("span");
+            title.className = "title";
+            title.innerText = playlist_info?.title;
+            playlist.append(title);
+            playlist.addEventListener("click", (_, _id=playlist_info?.id) => {
+                alert(_id);
+            })
+            return playlist;
+        },
         owner_preview: (mode="normal", owner_info) => { /* mode=normal|compact */
             let owner = document.createElement("div");
             owner.className = mode + " -owner-preview";
@@ -561,6 +583,17 @@ var render = {
             renderer.style.setProperty("--progress", (media.contentSize/media.contentLength*100)+"%");
             renderer.setAttribute("state", media.state);
             components.tabs.downloads.$.append(renderer);
+        });
+    },
+    playlists: async () => {
+        components.tabs.playlists.$.innerText = "";
+        Object.keys(database.playlists.content).forEach(playlist => {
+            let playlist_data = database.playlists.content[playlist];
+            components.tabs.playlists.$.append(render.$.playlist_preview("normal", {
+                id: playlist,
+                title: playlist_data.title,
+                thumbnail: playlist_data.thumbnail
+            }));
         });
     }
 };
