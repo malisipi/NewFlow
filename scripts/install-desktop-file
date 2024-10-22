@@ -6,5 +6,6 @@ echo Icon=$HOME/.local/share/icons/hicolor/scalable/apps/newflow.svg >> /tmp/_ne
 echo "Categories=AudioVideo;Audio;Video;Player;TV;Network;" >> /tmp/_newflow
 echo Path=$(pwd) >> /tmp/_newflow
 echo Exec=electron $(pwd) $NEWFLOW_FLAGS >> /tmp/_newflow
+mkdir ~/.local/share/applications/
 cp /tmp/_newflow ~/.local/share/applications/NewFlow.desktop
 rm /tmp/_newflow
