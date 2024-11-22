@@ -1,7 +1,7 @@
 > [!WARNING]
 > This application is unstable at the moment. Also most features is not implemented or partially implemented.
 
-# NewFlow
+# NewFlow ![Download Count](https://img.shields.io/github/downloads/malisipi/NewFlow/total?style=plastic&link=https%3A%2F%2Fgithub.com%2Fmalisipi%2FNewFlow)
 
 !["NewFlow Screenshot"](./assets/screenshots/NewFlow.png)
 
