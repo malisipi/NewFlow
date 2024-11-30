@@ -33,3 +33,7 @@
 ## Pop-Up Video Player
 
 ![](./10.png)
+
+## Artist View
+
+![](./11.png)
