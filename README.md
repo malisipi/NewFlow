@@ -11,7 +11,7 @@ Your free video player client for YouTube™.
 
 ## Installation
 
-> [!WARNING]
+> [!IMPORTANT]
 > Installers is designed to help end users while installing NewFlow however the installers can have some bugs. If you encounter if any bug, please report it.
 
 ### For Windows 10 and above
