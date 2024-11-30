@@ -1,11 +1,13 @@
-> [!WARNING]
-> This application is unstable at the moment. Also most features is not implemented or partially implemented.
-
 # NewFlow ![Download Count](https://img.shields.io/github/downloads/malisipi/NewFlow/total?style=plastic&link=https%3A%2F%2Fgithub.com%2Fmalisipi%2FNewFlow)
 
-!["NewFlow Screenshot"](./assets/screenshots/NewFlow.png)
+!["NewFlow Screenshot"](./assets/screenshots/4.png)
 
-> Your free video player client for YouTube™.
+Your free video player client for YouTube™.
+
+> You can see more screenshots from [Gallery](./assets/screenshots/GALLERY.md)
+
+> [!WARNING]
+> This application is unstable, there are still a lot of missing or partially implementated features however most of core features should work.
 
 ## Installation
 
