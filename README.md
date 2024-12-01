@@ -29,6 +29,13 @@ Your free video player client for YouTube™.
 
 ## Licenses
 
+> [!WARNING]
+> <h2>Disclaimer</h2>
+> <ul>
+>  <li>This project is intended to demonstrate technical concepts and is not designed or endorsed for production or commercial use.</li>
+>  <li>This software is provided "as-is" without warranty of any kind, express or implied. The authors are not liable for any misuse, damage, or legal consequences resulting from the use of this software.</li>
+> </ul> 
+
 > [!IMPORTANT]
 > The application is licensed by [Apache 2.0 License](./LICENSE).
 >
