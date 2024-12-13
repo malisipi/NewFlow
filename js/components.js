@@ -456,7 +456,7 @@ var components = {
                             };
                             type = "video";
                         };
-                        components.tabs.watch.video[`$${type}`].src = await yt_extractor.video.get_real_stream_uri(url);
+                        components.tabs.watch.video[`$${type}`].src = url;
                         components.tabs.watch.video.$_apply_state(state);
                     } else { // It's a live video, so give control to hls.js
                         components.tabs.watch.video.$hls.currentLevel = Number(id);
@@ -1045,7 +1045,7 @@ components.tabs.watch.info.controls.download.addEventListener("click", async () 
     if(components.tabs.watch.$$response.relatedStreams.length == 0) {
         return await electron.dialog.showMessageBox({message:"No related stream can not be found.\nTry again later.", type:"warning"});
     }
-    components.tabs.downloads.$_download(await yt_extractor.video.get_real_stream_uri(components.tabs.watch.$$response.relatedStreams[0].url), {
+    components.tabs.downloads.$_download(components.tabs.watch.$$response.relatedStreams[0].url, {
         title: components.tabs.watch.$$response.title,
         thumbnail: components.tabs.watch.$$response.thumbnails[0].url,
         owner_name: components.tabs.watch.$$response.owner.name,

@@ -266,10 +266,6 @@ var render = {
                     [response.relatedStreams, components.tabs.watch.video.$related_tracks]
                 ]).map(target => {
                     target[0].map(stream => {
-                        if(stream.url == null) {
-                            stream.url = yt_extractor.video.solve_signature_cipher_url(stream.signatureCipher);
-                        }
-                        stream.url = yt_extractor.video.solve_n_param(stream.url);
                         target[1].push(stream);
                     });
                 });
