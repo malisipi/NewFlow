@@ -72,15 +72,6 @@ Since Wayland protocol doesn't support to set windows always on top, there're no
 
 * If you're using Ubuntu or based distro, you can look up [this extension](https://github.com/Rafostar/gnome-shell-extension-pip-on-top) to get working.
 
-### Windows 7 Support
-
-There're no official support for Windows 7, however it can work with some tricks.
-
-> [!CAUTION]
-> Don't forget there's no support for Windows 7. And using any trick to make the application working, the application can be crash randomly times. Also it can cause security bugs.
-
-* You can try with [Supermium Electron](https://github.com/win32ss/supermium-electron). It's port of Electron for Windows 7.
-
 ### Creating Desktop Shortcut on Linux with Wayland Support
 
 ```
