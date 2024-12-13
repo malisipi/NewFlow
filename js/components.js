@@ -1133,6 +1133,4 @@ switch(window.process.argv.filter(arg => arg.startsWith("--newflow-material="))?
     };
 }
 
-// Extract YouTube algorithm for fast-loading
-
-if(!components.$.$_debug) yt_extractor.video.extract_youtube_algorithm();
+if(!components.$.$_debug) yt_extractor.video.get_ready();
