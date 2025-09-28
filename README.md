@@ -1,13 +1,15 @@
 # NewFlow ![Download Count](https://img.shields.io/github/downloads/malisipi/NewFlow/total?style=plastic&link=https%3A%2F%2Fgithub.com%2Fmalisipi%2FNewFlow)
 
+> [!IMPORTANT]
+> This application is no longer maintained or updated. And at the current state, failing in a lot of task. Please consider switching to alternative clients. Thanks for anybody who supported the application within the application lifespan (>1 year). It's the end of a story.
+> 
+> **Why?** Because of reversing API and making them always keep alive possible is not possible when you have not a maintainer for doing that. And spending time with that is like wasting your time to make alive your application. You will never know when the API will be changed; and when API changed, your application fails. It's like a cat/mouse game, however the mouse just gave up.
+
 !["NewFlow Screenshot"](./assets/screenshots/4.png)
 
 Your free video player client for YouTube™.
 
 > You can see more screenshots from [Gallery](./assets/screenshots/GALLERY.md)
-
-> [!WARNING]
-> This application is unstable, there are still a lot of missing or partially implementated features however most of core features should work.
 
 ## Installation
 
