@@ -48,17 +48,32 @@ database.following.remove = (owner_id) => {
     database.following.content = database.following.content.filter(owner => owner.id != owner_id);
     database.following.update_file();
 };
-database.feed.init();
+database.feed.init().then(()=>{
+    if(!!database.history.content) render.trends();
+});
 database.feed.fetch = async () => {
     database.feed.content.fetch_time = (new Date).toISOString();
     database.feed.content.feed = [];
     let owners = database.following.content.map(owner => owner.id);
     for(let owner_index=0; owner_index < owners.length; owner_index++){
         let id = owners[owner_index];
-        database.feed.content.feed = [...database.feed.content.feed, ...(await yt_extractor.owner.get_owner_videos(id)).entry];
+        // TODO: Add cooldown
+        let data = await yt_dlp(["--skip-download", "--dump-single-json", "--flat-playlist", "--extractor-args", "youtubetab:approximate_date", "--playlist-items", "1:10", `https://www.youtube.com/channel/${id}`]);
+        let entries = (!!data.entries[0].url) ? data.entries : data.entries[0].entries;
+        database.feed.content.feed = [...database.feed.content.feed, ...entries.map(entry => ({
+            id: entry.id,
+            title: entry.title,
+            thumbnail: entry.thumbnails[0].url,
+            length: entry.duration,
+            owner: {
+                name: data.channel,
+                verified: false // TODO: Get by following database
+            },
+            timestamp: entry.timestamp
+        }))];
     };
     database.feed.content.feed.sort((a, b) => {
-        if(new Date(a.published) < new Date(b.published)){
+        if(new Date(a.timestamp) < new Date(b.timestamp)){
             return 1;
         } else {
             return -1;
@@ -68,6 +83,7 @@ database.feed.fetch = async () => {
 };
 database.playlists.init();
 database.history.init().then(() => {
+    if(!!database.feed.content) render.trends();
     if (database.history.content.length > 2500) {
         console.warn("Huge watch history, Maybe you should clear or reduce the history?");
     }
@@ -75,7 +91,8 @@ database.history.init().then(() => {
 database.history.add = (video) => {
     /*
      * video.id<String>
-     * video.owner_name<String>
+     * video.owner.name<String>
+     * video.owner.verified<Boolean>
      * video.thumbnail<String> (data-uri)
      * video.length<Number>
      * video.title<String>
@@ -88,7 +105,10 @@ database.history.add = (video) => {
     database.history.content = database.history.content.filter($video => $video.id != video.id);
     database.history.content.push({
         id: video.id,
-        owner_name: video.owner_name ?? "Unknown Owner",
+        owner: {
+            name: video.owner.name ?? "Unknown Owner",
+            verified: video.owner.verified
+        },
         length: video.length ?? 0,
         thumbnail: video.thumbnail ?? null,
         title: video.title ?? "Unknown Title",

@@ -189,7 +189,7 @@ var render = {
             outer.className = "-comment-preview";
             let thumbnail = document.createElement("img");
             thumbnail.draggable = false;
-            thumbnail.src = info.owner.thumbnails?.[0]?.url;
+            thumbnail.src = info.owner.thumbnail;
             thumbnail.addEventListener("click", __channel_opener);
             outer.append(thumbnail);
             let details = document.createElement("div");
@@ -197,7 +197,7 @@ var render = {
             let name = document.createElement("div");
             name.className = "name";
             name.innerText = info.owner.name;
-            name.setAttribute("verified", info.owner.isVerified);
+            name.setAttribute("verified", info.owner.is_verified);
             name.addEventListener("click", __channel_opener);
             details.append(name);
             let text = document.createElement("div");
@@ -209,19 +209,17 @@ var render = {
     },
     trends: async () => {
         components.tabs.trends.$.innerHTML = ""; 
+        // Mix of history and feed
+        // It's better than crawling a random playlist that probably unrelated instead
+        // Maybe I should pick some videos and request related videos about it to make feed more relevant and make new things discover
+        let videos = [...database.feed.content.feed, ...database.history.content].toSorted((a,b)=>(Math.random()>0.5)?1:-1);
+        if(videos.length == 0) return components.tabs.trends.$.append(render.$.info_with_kaomoji("there_are_nothing_more_dog", "kaomoji_dog"));
+        let video_ids = videos.map(a=>a.id);
+        videos = videos.filter((a,i)=>video_ids.indexOf(a.id)==i); // filter same videos that exist in both source
+        videos = videos.slice(0, 100);
 
-        let trends = await yt_extractor.trends.get_trends();
-        trends.videos.forEach(video_preview => {
-            components.tabs.trends.$.append(render.$.video_preview("compact", {
-                id: video_preview.id,
-                title: video_preview.title,
-                thumbnail: video_preview.thumbnails[0].url,
-                owner: {
-                    name: video_preview.owner.name,
-                    verified: video_preview.owner.verified
-                },
-                length: video_preview.length
-            }));
+        videos.forEach(video_preview => {
+            components.tabs.trends.$.append(render.$.video_preview("compact", video_preview));
         });
     },
     watch: async (id) => {
@@ -229,20 +227,9 @@ var render = {
         let previous_title = components.tabs.watch.info.title.innerText;
         components.tabs.watch.info.title.innerText = i18n.text("loading");
 
-        if(!yt_extractor.video.is_extracted){
-            await yt_extractor.video.extract_youtube_algorithm();
-        }
-
-        let response = await yt_extractor.video.get_video(id);
+        let response = await yt_dlp(["--skip-download", "--write-comments", "--extractor-args", "youtube:max-comments=50", "--dump-json", `https://www.youtube.com/watch?v=${id}`], 3*60*60*1000); // 3 hour cache
         response.id = id;
         components.tabs.watch.$$response = response;
-
-        if(!response.isFamilySafe) {
-            if(!confirm(i18n.text("warning_not_family_safe_video"))){
-                components.tabs.watch.info.title.innerText = previous_title;
-                return;
-            };
-        };
 
         if(components.tabs.watch.video.$hls != null){
             components.tabs.watch.video.$hls.destroy();
@@ -251,19 +238,23 @@ var render = {
 
         components.tabs.watch.video.$_unload();
         
+        let video_tracks = response.formats.filter(a=>a.url && a.format_note?.includes("p") && a.vbr /* to eliminate video+audio stream*/);
+        let audio_tracks = response.formats.filter(a=>a.resolution.includes("audio"));
+        let hls_tracks = response.formats.filter(a=>a.manifest_url);
+
         components.tabs.watch.video.$video_tracks = [];
         components.tabs.watch.video.$audio_tracks = [];
-        components.tabs.watch.video.$related_tracks = [];
-        if(!components.tabs.watch.$$response.playability.isLiveNow){
-            if(components.tabs.watch.$$response.playability.isLive && components.tabs.watch.$$response.playability.streamTime) {
+        components.tabs.watch.video.$related_tracks = response.formats.filter(a=>a.url && a.format_note?.includes("p") && !a.vbr);
+        if(!response.is_live || video_tracks.length == 0){
+        //if(false){
+            if(response.was_live) {
                 components.tabs.watch.video.video_player.stream_date.$.setAttribute("show", true);
                 components.tabs.watch.video.video_player.stream_date.date.innerText = components.tabs.watch.$$response.playability.streamTime.toLocaleString();
             } else {
                 components.tabs.watch.video.video_player.stream_date.$.setAttribute("show", false);
                 ([
-                    [response.videoStreams, components.tabs.watch.video.$video_tracks],
-                    [response.audioStreams, components.tabs.watch.video.$audio_tracks],
-                    [response.relatedStreams, components.tabs.watch.video.$related_tracks]
+                    [video_tracks, components.tabs.watch.video.$video_tracks],
+                    [audio_tracks, components.tabs.watch.video.$audio_tracks]
                 ]).map(target => {
                     target[0].map(stream => {
                         target[1].push(stream);
@@ -274,13 +265,14 @@ var render = {
                 components.tabs.watch.video.$_change_stream("audio", -1);
             };
         } else {
+            if(!response.is_live) console.warn("No video tracks for us? :(");
             // Since Newflow pip is not compatible with live streams
             // Close Newflow pip until live stream ends.
             if(components.tabs.watch.video.$pip.$is_pip){
                 components.tabs.watch.video.$pip.$toggle();
             }
             components.tabs.watch.video.$hls = new Hls();
-            components.tabs.watch.video.$hls.loadSource(components.tabs.watch.$$response.hls);
+            components.tabs.watch.video.$hls.loadSource(components.tabs.watch.$$response?.manifest_url ?? hls_tracks.at(-1).manifest_url);
             components.tabs.watch.video.$hls.attachMedia(components.tabs.watch.video.$video);
             components.tabs.watch.video.$hls.on(Hls.Events.MANIFEST_PARSED,function() {
                 components.tabs.watch.video.$video_tracks = components.tabs.watch.video.$hls.levels.map(a=>a.height+"p");
@@ -299,48 +291,93 @@ var render = {
         components.tabs.watch.info.title.innerText = response.title;
         components.playbar.title.innerText = response.title;
         components.tabs.watch.info.description.innerText = response.description;
-        components.tabs.watch.video.video_player.$.setAttribute("timelines", components.tabs.watch.video.$_times(response.description));
-        components.tabs.watch.info.controls.like.setAttribute("count", response.likes);
-        render.$.chips(components.tabs.watch.info.keywords, response.keywords, render.search);
-        components.tabs.watch.info.owner.thumbnail.src = response.owner.thumbnails[0].url;
-        components.playbar.thumbnail.src = response.thumbnails[0].url;
-        components.tabs.watch.video.video_player.thumbnail.src = response.thumbnails[0].url;
-        components.tabs.watch.video.$video.poster = response.thumbnails[0].url;
-        components.tabs.watch.info.owner.name.innerText = response.owner.name;
-        components.tabs.watch.info.owner.name.setAttribute("verified", response.owner.verified);
-        components.playbar.owner.innerText = response.owner.name;
-        components.tabs.watch.info.owner.followers.innerText = `${response.owner.followers} ${i18n.text("followers")}`;
+        components.tabs.watch.video.video_player.$.setAttribute("timelines", (response.chapters ?? []).map(a=>[a.start_time, a.title]));
+        components.tabs.watch.info.controls.like.setAttribute("count", response.like_count);
+        render.$.chips(components.tabs.watch.info.keywords, response.tags, render.search);
+        components.playbar.thumbnail.src = response.thumbnail;
+        components.tabs.watch.video.video_player.thumbnail.src = response.thumbnail;
+        components.tabs.watch.video.$video.poster = response.thumbnail;
+        components.tabs.watch.info.owner.name.innerText = response.channel;
+        components.tabs.watch.info.owner.name.setAttribute("verified", !!response.channel_is_verified);
+        components.playbar.owner.innerText = response.channel;
+        components.tabs.watch.info.owner.followers.innerText = `${response.channel_follower_count} ${i18n.text("followers")}`;
 
         components.tabs.watch.video.$_add_track({
             id: id,
             title: response.title,
-            thumbnail: response.thumbnails[0].url,
-            length: response.length,
+            thumbnail: response.thumbnail,
+            length: response.duration,
             owner: {
-                name: response.owner.name,
-                verified: response.owner.verified
+                name: response.channel,
+                verified: !!response.channel_is_verified
             }
         }, true);
-        if(components.tabs.watch.panels.autoplay.checked
-            && components.tabs.watch.video.$queue[components.tabs.watch.video.$_queue_active()] == components.tabs.watch.video.$queue.at(-1)){ // if the playing track is last track
-                for(let next_index = 0; next_index < response.nextVideos.length; next_index++) {
-                    let video_preview = response.nextVideos[next_index];
-                    if(video_preview.length > 15*60) { // TODO: @@@ some settings If video longer than 15min
-                        continue;
-                    }
-                    video_preview.thumbnail = video_preview.thumbnails?.[next_index]?.url ?? null;
-                    if(components.tabs.watch.video.$_add_track(video_preview, false)){
-                        break;
-                    }
-                }
-        };
 
-        if(components.tabs.watch.video.$times != []){
+        (async () => {
+            let playlist_mix_data = await yt_dlp([
+                "--skip-download",
+                "--flat-playlist",
+                "--playlist-items", "2:21", // skip first video which is already running
+                "--dump-single-json",
+                `https://www.youtube.com/watch?v=${components.tabs.watch.$$response.id}&list=RD${components.tabs.watch.$$response.id}`
+            ]);
+            let recommended_videos = playlist_mix_data.entries || [];
+
+            components.tabs.watch.next_videos.innerHTML = "";
+
+            recommended_videos.forEach(video_preview => {
+                components.tabs.watch.next_videos.append(render.$.video_preview("compact", {
+                    id: video_preview.id,
+                    title: video_preview.title,
+                    thumbnail: video_preview.thumbnails[0].url,
+                    owner: {
+                        name: video_preview.channel,
+                        verified: !!video_preview.channel_is_verified
+                    },
+                    length: video_preview.duration
+                }));
+            });
+
+            if(components.tabs.watch.panels.autoplay.checked
+                && components.tabs.watch.video.$queue[components.tabs.watch.video.$_queue_active()] == components.tabs.watch.video.$queue.at(-1)){ // if the playing track is last track
+                    for(let next_index = 0; next_index < recommended_videos.length; next_index++) {
+                        if(recommended_videos[next_index].duration > 15*60) { // TODO: @@@ some settings If video longer than 15min
+                            continue;
+                        }
+                        if(components.tabs.watch.video.$_add_track({
+                            id: recommended_videos[next_index].id,
+                            length: recommended_videos[next_index].duration,
+                            thumbnail: recommended_videos[next_index].thumbnails[0].url,
+                            title: recommended_videos[next_index].title,
+                            owner: {
+                                name: recommended_videos[next_index].channel,
+                                verified: !!recommended_videos[next_index].channel_is_verified
+                            }
+                        }, false)){
+                            break;
+                        }
+                    }
+            };
+            // Update playing queue
+            render.$.queue(components.tabs.watch.panels.playing_queue);
+            render.$.queue(components.tabs.queue.$);
+
+            // Update controls
+            components.tabs.watch.video.video_player.controls.previous.style.setProperty("display", ["none","unset"][Number(components.tabs.watch.video.$_can_previous())]);
+            components.tabs.watch.video.video_player.controls.next.style.setProperty("display", ["none","unset"][Number(components.tabs.watch.video.$_can_next())]);
+        })();
+
+        (async () => {
+            let owner_info = await yt_dlp(["--skip-download", "--dump-single-json", "--flat-playlist", "--playlist-items", "0", "--extractor-args", "youtubetab:approximate_date", `https://www.youtube.com/channel/${components.tabs.watch.$$response.channel_id}`]);
+            components.tabs.watch.info.owner.thumbnail.src = owner_info.thumbnails.filter(a=>a.id.includes("avatar"))[0].url;
+        })();
+
+        if(Array.isArray(response.chapters) && response.chapters.length > 0){
             render.$.video_player_details(
                 components.tabs.watch.video.video_player.controls.details.$$.timelines,
-                components.tabs.watch.video.$times.map(timeline => ({
-                    text: timeline[1],
-                    value: timeline[0]
+                components.tabs.watch.$$response.chapters.map(timeline => ({
+                    text: timeline.title,
+                    value: timeline.start_time
                 })),
                 i18n.text("timelines")
             );
@@ -349,21 +386,25 @@ var render = {
         components.tabs.watch.video.video_player.controls.previous.style.setProperty("display", ["none","unset"][Number(components.tabs.watch.video.$_can_previous())]);
         components.tabs.watch.video.video_player.controls.next.style.setProperty("display", ["none","unset"][Number(components.tabs.watch.video.$_can_next())]);
 
+        let get_language_name = _lang => {
+            try {
+                return (new Intl.DisplayNames([navigator.language], {type:"language"})).of(_lang) ?? _lang;
+            } catch {
+                return _lang;
+            };
+        };
+
         render.$.video_player_details(
             components.tabs.watch.video.video_player.controls.details.$$.audio_quality,
             components.tabs.watch.video.$audio_tracks.map(track => {
-                let codec = track.mimeType;
-                if(track.mimeType.includes("mp4a")){
+                let codec = track.acodec;
+                if(track.acodec.includes("mp4a")){
                     codec = "m4a";
-                } else if(track.mimeType.includes("opus")) {
+                } else if(track.acodec.includes("opus")) {
                     codec = "opus";
                 };
-                let language = "";
-                if(track?.audioTrack){
-                    language = `${track?.audioTrack?.displayName} / `;
-                }
-                let bitrate = Math.round(track.bitrate / 1024);
-                return `${language}${bitrate} kbps / ${codec}`;
+                let language = get_language_name(track.language);
+                return `${language} / ${track.abr} / ${codec}`;
             }),
             i18n.text("audio_quality")
         );
@@ -371,13 +412,13 @@ var render = {
         render.$.video_player_details(
             components.tabs.watch.video.video_player.controls.details.$$.video_quality,
             components.tabs.watch.video.$video_tracks.map(track => {
-                let codec = track.mimeType;
-                if(track.mimeType.includes("mp4")){
+                let codec = track.vcodec;
+                if(track.vcodec.includes("mp4")){
                     codec = "mpeg-4";
-                } else if(track.mimeType.includes("webm")) {
+                } else if(track.vcodec.includes("webm")) {
                     codec = "webm";
                 };
-                return `${track.qualityLabel} / ${codec}`;
+                return `${track.format_note} / ${track.vbr} / ${codec}`;
             }),
             i18n.text("video_quality")
         );
@@ -387,24 +428,10 @@ var render = {
             components.tabs.watch.video.video_player.controls.details.$$.captions,
             [
                 {text:i18n.text("disable"), value:-1},
-                ...response.captions.map( (track,index) => ({text:track?.name?.simpleText ?? track?.name?.runs?.[0]?.text, value:index}))
+                ...Object.keys(components.tabs.watch.$$response.subtitles).filter(a=>a!="live_chat").map((track,index) => ({text:get_language_name(track), value:track}))
             ],
             i18n.text("captions")
         );
-
-        components.tabs.watch.next_videos.innerHTML = "";
-        response.nextVideos.forEach(video_preview => {
-            components.tabs.watch.next_videos.append(render.$.video_preview("compact", {
-                id: video_preview.id,
-                title: video_preview.title,
-                thumbnail: video_preview.thumbnails[0].url,
-                owner: {
-                    name: video_preview.owner.name,
-                    verified: video_preview.owner.verified
-                },
-                length: video_preview.length
-            }));
-        });
 
         // TODO: Auto start playing video
         components.tabs.watch.video.$video.addEventListener("canplay", () => {
@@ -418,21 +445,23 @@ var render = {
                 sizes: `${response.thumbnails[0].width}x${response.thumbnails[0].height}`
             }];*/
 
+            let thumbnail = components.tabs.watch.$$response.thumbnails.filter(a=>a.resolution)[0];
+
             let the_artwork = [{
-                src: await image_helper.crop.as_square(response.thumbnails[0].url, 256, response.thumbnails[0].width, response.thumbnails[0].height),
+                src: await image_helper.crop.as_square(thumbnail.url, 256, thumbnail.width, thumbnail.height),
                 sizes: `256x256`
             }];
 
             navigator.mediaSession.metadata = new MediaMetadata({
                 title: response.title,
-                artist: response.owner.name,
+                artist: response.channel,
                 artwork: the_artwork
             });
         })();
 
         (async () => {
             // TODO: @@@ui.styles.video_theme_colors<bool>(true||false|true)
-            let dominant_color = await image_helper.dominant_color(response.thumbnails[0].url);
+            let dominant_color = await image_helper.dominant_color(response.thumbnail);
             document.body.setAttribute("theme-variant", "player-effects");
             document.body.style.setProperty("--effect-color", dominant_color);
         })();
@@ -442,14 +471,17 @@ var render = {
             database.history.add({
                 title: response.title,
                 id: id,
-                owner_name: response.owner.name,
-                thumbnail: await image_helper.data_uri.from_image_uri(response.thumbnails[0].url),
-                length: response.length
+                owner: {
+                    name: response.channel,
+                    verified: !!response.channel_is_verified
+                },
+                thumbnail: await image_helper.data_uri.from_image_uri(response.thumbnail),
+                length: response.duration
             });
         })();
 
         (async () => {
-            if(database.following.is_following(response.owner.id)){
+            if(database.following.is_following(response.channel_id)){
                 components.tabs.watch.info.owner.follow.innerText = "notifications_active";
             } else {
                 components.tabs.watch.info.owner.follow.innerText = "notifications";
@@ -461,35 +493,54 @@ var render = {
         render.$.queue(components.tabs.queue.$);
 
         components.tabs.watch.comments.innerHTML = "";
-        let comments = await yt_extractor.video.get_comments(response.commentsToken);
-        comments?.comments?.forEach(data=>components.tabs.watch.comments.append(render.$.comment_preview(data)));
+        response.comments.forEach(data=>components.tabs.watch.comments.append(render.$.comment_preview({
+            owner: {
+                thumbnail: data.author_thumbnail,
+                id: data.author_id,
+                name: data.author,
+                is_verified: data.author_is_verified
+            },
+            text: data.text
+        })));
     },
     owner: async (id) => {
-        let data = await yt_extractor.owner.get_owner(id);
+        let data = await yt_dlp(["--skip-download", "--dump-single-json", "--flat-playlist", "--extractor-args", "youtubetab:approximate_date", `https://www.youtube.com/channel/${id}`]);
         components.tabs.owner.$$response = data;
         components.tabs.$_switch("owner");
-        if(data.backgrounds?.[0]?.url != null){
+        
+        //let avatars = components.tabs.owner.$$response.thumbnails.filter(a=>!!a.width && a.width === a.height);
+        let avatars = components.tabs.owner.$$response.thumbnails.filter(a=>a.id.includes("avatar"));
+        let banners = components.tabs.owner.$$response.thumbnails.filter(a=>a.id.includes("banner"));
+
+        let videos = null
+        if(!!components.tabs.owner.$$response.entries[0].entries) {
+            videos = components.tabs.owner.$$response.entries.map(a=>a.entries).reduce((a,b)=>{return [...a,...b]},[]);
+        } else {
+            videos = components.tabs.owner.$$response.entries;
+        };
+
+        if(banners.length != 0){
             components.tabs.owner.banner.background.setAttribute("banner", true);
-            components.tabs.owner.banner.background.src = data.backgrounds?.[0]?.url;
+            components.tabs.owner.banner.background.src = banners[0].url;
         } else {
             components.tabs.owner.banner.background.setAttribute("banner", false);
-        }
+        };
         components.tabs.owner.banner.description.innerText = data.description;
-        components.tabs.owner.banner.followers.innerText = data.followers + " Followers";
-        components.tabs.owner.banner.name.innerText = data.name;
-        components.tabs.owner.banner.video_count.innerText = data.videosCount + " Videos";
-        components.tabs.owner.banner.thumbnail.src = data.thumbnails?.[0]?.url;
-        components.tabs.owner.banner.name.setAttribute("verified", data.verified);
+        components.tabs.owner.banner.followers.innerText = data.channel_follower_count + " Followers";
+        components.tabs.owner.banner.name.innerText = data.channel;
+        components.tabs.owner.banner.video_count.innerText = videos.length + " Videos";
+        components.tabs.owner.banner.thumbnail.src = avatars[0].url;
+        //components.tabs.owner.banner.name.setAttribute("verified", data.channel_is_verified);
 
         components.tabs.owner.videos.innerHTML = "";
 
-        if(data.videos != null) {
-            data.videos.forEach(video_preview => {
+        if(videos.length > 0) {
+            videos.forEach(video_preview => {
                 components.tabs.owner.videos.append(render.$.video_preview("compact", {
                     id: video_preview.id,
                     title: video_preview.title,
                     thumbnail: video_preview.thumbnails?.[0]?.url ?? null,
-                    length: video_preview.length,
+                    length: video_preview.duration,
                     owner: {
                         name: data.name
                     }
@@ -509,17 +560,18 @@ var render = {
         components.tabs.$_switch("search");
         components.titlebar.search.value = query;
         components.tabs.search.$.innerHTML = "";
-        let response = await yt_extractor.search.search(query);
-        response.forEach(video_preview => {
+        let response = await yt_dlp(["--skip-download", "--dump-single-json", "--flat-playlist", "--playlist-items", "1:20", `ytsearch20:${query}`]);
+        response.entries.forEach(video_preview => {
             components.tabs.search.$.append(render.$.video_preview("normal", {
                 id: video_preview.id,
                 title: video_preview.title,
                 thumbnail: video_preview.thumbnails[0].url,
                 owner: {
-                    name: video_preview.owner.name,
-                    verified: video_preview.owner.verified
+                    name: video_preview.channel,
+                    id: video_preview.channel_id,
+                    verified: video_preview.channel_is_verified
                 },
-                length: video_preview.length
+                length: video_preview.duration
             }));
         });
     },
@@ -527,16 +579,7 @@ var render = {
         components.tabs.history.$.innerHTML = "";
         if(database.history.content.length == 0) return components.tabs.history.$.append(render.$.info_with_kaomoji("there_are_nothing_more_dog", "kaomoji_dog"));
         database.history.content.toReversed().forEach(video_preview => {
-            components.tabs.history.$.append(render.$.video_preview("normal", {
-                id: video_preview.id,
-                title: video_preview.title,
-                thumbnail: video_preview.thumbnail,
-                owner: {
-                    name: video_preview.owner_name,
-                    verified: false
-                },
-                length: video_preview.length
-            }));
+            components.tabs.history.$.append(render.$.video_preview("normal", video_preview));
         });
     },
     following: async () => {
@@ -554,7 +597,7 @@ var render = {
             components.tabs.feed.$.append(render.$.video_preview("normal", {
                 id: video_preview.id,
                 title: video_preview.title,
-                thumbnail: video_preview.thumbnail.url,
+                thumbnail: video_preview.thumbnail,
                 owner: {
                     name: video_preview.owner.name,
                     verified: video_preview.owner.verified
@@ -570,7 +613,7 @@ var render = {
             let renderer = render.$.video_preview("normal", {
                 title: media.properties.title,
                 owner: {
-                    name: media.properties.owner_name
+                    name: media.properties.owner.name
                 },
                 length: media.properties.length,
                 id: media.properties.id,

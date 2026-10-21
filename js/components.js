@@ -218,23 +218,6 @@ var components = {
                     return _return;
                 },
                 $times: null,
-                $_times: (description) => {
-                    let times = description.match(/[0-9\:]+:[0-9]{2,}\ +[^\n]+/g);
-                    if(times == null) { // Try another filter for timeline extraction
-                        times = description.match(/[^\n]+\ +[0-9\:]+:[0-9]{2,}/g);
-                    };
-                    if(times == null){ // If still can not be extracted, return false
-                        components.tabs.watch.video.$times = [];
-                        return false;
-                    };
-                    components.tabs.watch.video.$times = times.map(text => {
-                        let time = text.match(/[0-9\:]+:[0-9]{2,}/g)[0];
-                        time = yt_extractor.utils.extract_time_from_text(time)
-                        let details = text.replace(/[0-9:,-]/g,"").trim();
-                        return [time, details];
-                    });
-                    return true;
-                },
                 $_theatre: () => {
                     if(components.tabs.watch.$.getAttribute("mode") == "theatre") {
                         components.tabs.watch.$.removeAttribute("mode");
@@ -480,29 +463,21 @@ var components = {
                         $_ttml: async (content) => {
                             components.tabs.watch.video.$captions.$_remove();
                             let subtitles = (new DOMParser()).parseFromString(content, "application/xml");
-                            let texts = subtitles.querySelectorAll("*[start][dur]");
+                            let texts = subtitles.querySelectorAll("*[begin][end]");
                             let track = components.tabs.watch.video.$video.addTextTrack("captions");
                             track.mode = "showing";
 
+                            let get_time = (time) => {
+                                return (new Date(`1970-01-01T${time}Z`)).getTime()/1000;
+                            };
+
+                            window.sub_tt = texts;
+
                             for(let text_index = 0; text_index < texts.length; text_index++){
                                 let text = texts[text_index];
-                                let nodes = text.childNodes;
-                                let caption_text = "";
-                                for(let node_index in nodes){
-                                    let the_node = nodes[node_index];
-                                    switch(the_node.nodeName){
-                                        case "#text":{
-                                            caption_text += the_node.nodeValue;
-                                            break;
-                                        } case "br": {
-                                            caption_text += "\n";
-                                            break;
-                                        }
-                                    }
-                                };
-
-                                let start = Number(text.getAttribute("start"));
-                                let end = start + Number(text.getAttribute("dur"));
+                                let caption_text = text.textContent;
+                                let start = get_time(text.getAttribute("begin"));
+                                let end = get_time(text.getAttribute("end"));
                                 let cue = new VTTCue(start, end, caption_text);
                                 cue.line = -4;
                                 track.addCue(cue);
@@ -510,7 +485,7 @@ var components = {
                         },
                         $: async (id) => {
                             components.tabs.watch.video.$captions.$_remove();
-                            let url = components.tabs.watch.$$response.captions[id].baseUrl;
+                            let url = components.tabs.watch.$$response.subtitles[id].filter(a=>a.ext=="ttml")[0].url;
                             let response = await fetch(url);
                             let content = await response.text();
                             components.tabs.watch.video.$captions.$_load.$_ttml(content);
@@ -646,7 +621,7 @@ var components = {
                 /* properties:
                  *  title
                  *  thumbnail
-                 *  owner_name
+                 *  owner.name
                  *  length
                  *  id
                  */
@@ -758,16 +733,16 @@ components.titlebar.search.$.addEventListener("keydown", event => {
         render.search(components.titlebar.search.$.value);
         components.titlebar.search.$.blur();
         clearTimeout(components.titlebar.search.$timeout);
-    } else {
+    }/* else { // TODO: Make the list local search history
         clearTimeout(components.titlebar.search.$timeout);
         components.titlebar.search.$timeout = setTimeout(async () => {
             if(components.titlebar.search.$.value.length == 0 || components.titlebar.search.$last_search == components.titlebar.search.$.value.trim()) return;
             components.titlebar.search.$_clear();
             components.titlebar.search.$last_search = components.titlebar.search.$.value.trim();
-            let list = await yt_extractor.search.get_suggestions(components.titlebar.search.$last_search);
+            let list = get_suggestions(components.titlebar.search.$last_search);
             components.titlebar.search.$_load(list);
         }, 500);
-    }
+    }*/
 });
 
 components.global_actions.search.addEventListener("click", () => {
@@ -1011,22 +986,22 @@ components.tabs.watch.video.video_player.controls.details.$$.filter.querySelecto
 
 components.tabs.watch.info.owner.$.addEventListener("click", (event) => {
     if(event.target.className == "follow") return;
-    render.owner(components.tabs.watch.$$response.owner.id);
+    render.owner(components.tabs.watch.$$response.channel_id);
 });
 
 components.tabs.watch.info.owner.follow.addEventListener("click", async () => {
-    if(!database.following.is_following(components.tabs.watch.$$response.owner.id)){ // If not following yet
+    if(!database.following.is_following(components.tabs.watch.$$response.channel_id)){ // If not following yet
         components.tabs.watch.info.owner.follow.innerText = "notifications_active";
         database.following.add({
-            id: components.tabs.watch.$$response.owner.id,
-            name: components.tabs.watch.$$response.owner.name,
-            followers: components.tabs.watch.$$response.owner.followers,
-            verified: components.tabs.watch.$$response.owner.verified,
-            thumbnail: await image_helper.data_uri.from_image_uri(components.tabs.watch.$$response.owner.thumbnails[0].url),
+            id: components.tabs.watch.$$response.channel_id,
+            name: components.tabs.watch.$$response.channel,
+            followers: components.tabs.watch.$$response.channel_follower_count,
+            verified: !!components.tabs.watch.$$response.channel_is_verified,
+            thumbnail: await image_helper.data_uri.from_image_uri(components.tabs.watch.info.owner.thumbnail.src),
         });
     } else {
         components.tabs.watch.info.owner.follow.innerText = "notifications";
-        database.following.remove(components.tabs.watch.$$response.owner.id);
+        database.following.remove(components.tabs.watch.$$response.channel_id);
     }
 });
 
@@ -1039,17 +1014,16 @@ components.tabs.watch.info.controls.pip.addEventListener("click", () => {
     components.tabs.watch.video.$pip.$toggle();
 });
 components.tabs.watch.info.controls.download.addEventListener("click", async () => {
-    if(components.tabs.watch.video.$hls != null) {
-        return await electron.dialog.showMessageBox({message:"Live Streams can not be downloaded", type:"warning"});
-    };
-    if(components.tabs.watch.$$response.relatedStreams.length == 0) {
+    if(components.tabs.watch.video.$related_tracks.length == 0) {
         return await electron.dialog.showMessageBox({message:"No related stream can not be found.\nTry again later.", type:"warning"});
     }
-    components.tabs.downloads.$_download(components.tabs.watch.$$response.relatedStreams[0].url, {
+    components.tabs.downloads.$_download(components.tabs.watch.video.$related_tracks[0].url, {
         title: components.tabs.watch.$$response.title,
-        thumbnail: components.tabs.watch.$$response.thumbnails[0].url,
-        owner_name: components.tabs.watch.$$response.owner.name,
-        length: components.tabs.watch.$$response.length,
+        thumbnail: components.tabs.watch.$$response.thumbnail,
+        owner: {
+            name: components.tabs.watch.$$response.channel
+        },
+        length: components.tabs.watch.$$response.duration,
         id: components.tabs.watch.$$response.id
     });
 });
@@ -1062,10 +1036,10 @@ components.tabs.owner.banner.follow.addEventListener("click", async () => {
         components.tabs.owner.banner.follow.innerText = "notifications_active";
         database.following.add({
             id: components.tabs.owner.$$response.id,
-            name: components.tabs.owner.$$response.name,
-            followers: components.tabs.owner.$$response.followers,
+            name: components.tabs.owner.$$response.channel,
+            followers: components.tabs.owner.$$response.channel_follower_count,
             verified: components.tabs.owner.$$response.verified,
-            thumbnail: await image_helper.data_uri.from_image_uri(components.tabs.owner.$$response.thumbnails[0].url),
+            thumbnail: await image_helper.data_uri.from_image_uri(components.tabs.owner.$$response.thumbnails.filter(a=>a.id.includes("avatar"))[0].url),
         });
     } else {
         components.tabs.owner.banner.follow.innerText = "notifications";
@@ -1104,9 +1078,6 @@ if(components.$.$_debug) {
 
 //context_menu.init();
 
-// Render trends
-render.trends();
-
 // Load theme and materials
 // TODO: Move these code to settings
 
@@ -1132,5 +1103,3 @@ switch(window.process.argv.filter(arg => arg.startsWith("--newflow-material="))?
         break;
     };
 }
-
-if(!components.$.$_debug) yt_extractor.video.get_ready();

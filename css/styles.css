@@ -1053,6 +1053,8 @@ video::cue {
         .background {
             width: 100%;
             border-radius: var(--border-radius-size);
+            max-height: 200px;
+            object-fit: cover;
 
             &[banner="false"] {
                 display: none;

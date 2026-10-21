@@ -10,7 +10,13 @@ Full Error: ${err}`);
 
 window.addEventListener("DOMContentLoaded", () => {
     components.tabs.watch.video.$video.addEventListener("error", async event => {
-        alert(`${event.target.error.code} / ${event.target.error.message}`);
-        console.error(event.target.error);
+        if(event.target.error.code == 4) {
+            ytdlp_cache_invalidate(components.tabs.watch.$$response.id);
+            console.warn("Cache invalidated, " + components.tabs.watch.$$response.id);
+            render.watch(components.tabs.watch.$$response.id);
+        } else {
+            alert(`${event.target.error.code} / ${event.target.error.message}`);
+            console.error(event.target.error);
+        };
     });
 });

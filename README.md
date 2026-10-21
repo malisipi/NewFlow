@@ -1,9 +1,4 @@
-# NewFlow ![Download Count](https://img.shields.io/github/downloads/malisipi/NewFlow/total?style=plastic&link=https%3A%2F%2Fgithub.com%2Fmalisipi%2FNewFlow)
-
-> [!IMPORTANT]
-> This application is no longer maintained or updated. And at the current state, failing in a lot of task. Please consider switching to alternative clients. Thanks for anybody who supported the application within the application lifespan (>1 year). It's the end of a story.
-> 
-> **Why?** Because of reversing API and making them always keep alive possible is not possible when you have not a maintainer for doing that. And spending time with that is like wasting your time to make alive your application. You will never know when the API will be changed; and when API changed, your application fails. It's like a cat/mouse game, however the mouse just gave up.
+# NewFlow
 
 !["NewFlow Screenshot"](./assets/screenshots/4.png)
 
@@ -16,16 +11,12 @@ Your free video player client for YouTube™.
 > [!IMPORTANT]
 > Installers is designed to help end users while installing NewFlow however the installers can have some bugs. If you encounter if any bug, please report it.
 
-### For Windows 10 and above
-
-> You can use the installer that placed in releases section.
-
 ### For Linux
 
 > You can run the command that placed below to install NewFlow.
 
 > [!IMPORTANT]
-> `git` and `electron` commands must be installed to use the script.
+> `git`, `yt-dlp` and `electron` commands must be installed to use the script.
 
 ```curl https://raw.githubusercontent.com/malisipi/NewFlow/main/linux-setup | bash```
 
@@ -43,7 +34,7 @@ Your free video player client for YouTube™.
 >
 > The icons and banners of application is licensed by [Attribution-NonCommercial-NoDerivatives 4.0 International License](./LICENSE_CC_BY_NC_ND_4.0). So `./assets/banner.png`, `./assets/newflow.png`, `./assets/newflow.ico` and `./assets/newflow.svg` is licensed by [Attribution-NonCommercial-NoDerivatives 4.0 International License](./LICENSE_CC_BY_NC_ND_4.0)
 
-- [Electron.JS](https://github.com/electron/electron) is licensed by [MIT License](https://github.com/electron/electron/blob/main/LICENSE).
+- [Electron.JS](https://github.com/electron/electron) is licensed by [MIT License](https://github.com/electron/electron/blob/main/LICENSE). (Not bundled with the project)
 - [electron/remote](https://github.com/electron/remote) is licensed by [MIT License](https://github.com/electron/remote/blob/main/LICENSE).
     - Module placed in `./node_modules/@electron/remote`.
 - [Yaru Icons](https://github.com/ubuntu/yaru) is licensed by [CC-BY-SA 4.0 License](https://github.com/ubuntu/yaru#copying-or-reusing).
@@ -56,15 +47,19 @@ Your free video player client for YouTube™.
     - Icons placed in `./assets/bootstrap-icons/`.
 - [Material Symbols](https://github.com/google/material-design-icons) is licensed by [Apache 2.0 License](https://github.com/google/material-design-icons/blob/master/LICENSE).
     - Icons placed in `./assets/material-symbols/`, `./fonts/material-symbols-rounded.woff2` and `./css/material-symbols.css` (Edited).
-- [yt-extractor.js](https://github.com/malisipi/yt-extractor.js) is licensed by [Apache 2.0 License](https://github.com/malisipi/yt-extractor.js/blob/main/LICENSE).
-    - Sub dependencies:
-        - [fast-xml-parse](https://www.npmjs.com/package/fast-xml-parser) is licensed by [MIT License](https://github.com/NaturalIntelligence/fast-xml-parser/blob/master/LICENSE).
+- ~~[yt-extractor.js](https://github.com/malisipi/yt-extractor.js) is licensed by [Apache 2.0 License](https://github.com/malisipi/yt-extractor.js/blob/main/LICENSE).~~ It was used at old versions. It is no longer dependent to yt-extractor.js
 - [node-vibrant](https://github.com/Vibrant-Colors/node-vibrant) is licensed by [MIT License](https://github.com/Vibrant-Colors/node-vibrant/blob/master/LICENSE.md).
     - Script file placed in `./js/thirdparty/vibrant.js`.
 - [hls.js](https://github.com/video-dev/hls.js) is licensed by [Apache 2.0 License](https://github.com/video-dev/hls.js/blob/master/LICENSE).
     - Script file placed in `./js/thirdparty/hls.light.min.js`.
 
 ## FAQ
+
+### Isn't the project depracted, why it's still getting updates?
+
+The project was using internal extractor which is too hard to maintain alone. And I had to depracte both projects. However Newflow isn't hardly dependent to yt-extractor.js, so it makes porting backend possible.
+
+Even I ported the project to new backend after years, it might or might not get new updates or features. I cannot promise about it. But at least, we have working client again.
 
 ### Picture-in-Picture gets under windows on Linux/Wayland
 
